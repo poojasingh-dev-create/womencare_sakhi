@@ -284,12 +284,7 @@ class RecipePage extends StatelessWidget {
             subtitle: Padding(padding: const EdgeInsets.only(top: 6), child: Text(recipes[i]['desc']!)),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class TipsPage extends StatelessWidget {
+        class TipsPage extends StatelessWidget {
   const TipsPage({super.key});
   @override
   Widget build(BuildContext context) {
@@ -301,7 +296,23 @@ class TipsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('🏡 Kitchen & Beauty'), backgroundColor: Colors.green, foregroundColor: Colors.white),
       body: ListView.builder(
- class VideoPage extends StatefulWidget {
+        padding: const EdgeInsets.all(14),
+        itemCount: tips.length,
+        itemBuilder: (context, i) {
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: ListTile(
+              title: Text(tips[i]['title']!, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+              subtitle: Padding(padding: const EdgeInsets.only(top: 6), child: Text(tips[i]['desc']!)),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
   @override
   State<VideoPage> createState() => _VideoPageState();
@@ -341,7 +352,7 @@ class _VideoPageState extends State<VideoPage> {
                     onPressed: () => setState(() => step = (step + 1) % slides.length),
                     icon: const Icon(Icons.play_arrow),
                     label: const Text('Next Video Step ▶️'),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -394,7 +405,7 @@ class _BudgetPageState extends State<BudgetPage> {
                     }
                   },
                   child: const Text('+ Kharch Jodein'),
-                )
+                ),
               ],
             ),
           ),
@@ -435,9 +446,9 @@ class _WaterPageState extends State<WaterPage> {
                 TextButton(
                   onPressed: () => setState(() => glasses = 0),
                   child: const Text('Reset'),
-                )
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),
