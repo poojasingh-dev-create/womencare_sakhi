@@ -1,7 +1,7 @@
 name: womencare_sakhi
-description: WomenCare Sakhi App
+description: WomenCare Sakhi - Safety, Health & Home Companion
 publish_to: 'none'
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  url_launcher: ^6.2.5
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
