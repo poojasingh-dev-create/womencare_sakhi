@@ -16,3 +16,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "image_280732b5.jpg"
