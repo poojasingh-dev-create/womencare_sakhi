@@ -214,77 +214,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
     );
   }
 }
-class PeriodPage extends StatefulWidget {
-  const PeriodPage({super.key});
-  @override
-  State<PeriodPage> createState() => _PeriodPageState();
-}
-
-class _PeriodPageState extends State<PeriodPage> {
-  DateTime? lastDate;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('🌸 Period Tracker'), backgroundColor: const Color(0xFFE91E63), foregroundColor: Colors.white),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    const Text('Apni Pichli Period Date Chunein:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        final picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2025), lastDate: DateTime(2028));
-                        if (picked != null) setState(() => lastDate = picked);
-                      },
-                      icon: const Icon(Icons.calendar_month),
-                      label: const Text('Select Date'),
-                    ),
-                    if (lastDate != null) ...[
-                      const SizedBox(height: 16),
-                      Text('Agli Expected Date: ${lastDate!.add(const Duration(days: 28)).toString().split(' ')[0]}',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFE91E63))),
-                    ]
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text('⚠️ Medical Disclaimer: Yeh tracker keval samanya jankari ke liye hai.', style: TextStyle(fontSize: 12, color: Colors.black54)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RecipePage extends StatelessWidget {
-  const RecipePage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    final recipes = [
-      {'title': '🥪 Paneer Mayo Sandwich (10 Mins)', 'desc': 'Samagri: Bread, grated paneer, mayonnaise, kali mirch.\nTarika: Sabhi samagri milakar bread par lagayein aur sek lein.'},
-      {'title': '🍜 5-Min Masala Oats', 'desc': 'Samagri: Masala oats, 1 cup pani, tamatar aur pyaz.\nTarika: Sabziyon ko 1 min bhunein, pani aur oats dalkar 3 min pakayein.'},
-      {'title': '🥗 Sprouts Chaat Tiffin', 'desc': 'Samagri: Uble moong sprouts, kheera, nimbu ras, chaat masala.\nTarika: Sabko ek bowl me milayein, healthy nashta taiyar hai!'},
-    ];
-    return Scaffold(
-      appBar: AppBar(title: const Text('🍲 Quick Recipes'), backgroundColor: Colors.orange, foregroundColor: Colors.white),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(14),
-        itemCount: recipes.length,
-        itemBuilder: (context, i) => Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            title: Text(recipes[i]['title']!, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange)),
-            subtitle: Padding(padding: const EdgeInsets.only(top: 6), child: Text(recipes[i]['desc']!)),
-          ),
-        ),
-        class TipsPage extends StatelessWidget {
+class TipsPage extends StatelessWidget {
   const TipsPage({super.key});
   @override
   Widget build(BuildContext context) {
