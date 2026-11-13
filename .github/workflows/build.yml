@@ -9,8 +9,11 @@ jobs:
         with:
           channel: 'stable'
       - run: flutter create .
+      - run: flutter pub get
+      - run: dart run flutter_launcher_icons
+      - run: sed -i 's/android:label="womencare_sakhi"/android:label="SheCare Sakhi"/g' android/app/src/main/AndroidManifest.xml
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: WomenCare-Sakhi-App
+          name: SheCare-Sakhi-V2
           path: build/app/outputs/flutter-apk/app-release.apk
