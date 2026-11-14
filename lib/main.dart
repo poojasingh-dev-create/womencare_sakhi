@@ -46,16 +46,26 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFFF48FB1), Color(0xFFE91E63)], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(radius: 55, backgroundColor: Colors.white, child: Text('🌸', style: TextStyle(fontSize: 55))),
-            SizedBox(height: 20),
-            Text('SheCare Sakhi', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
-            SizedBox(height: 8),
-            Text('Har Nari Ki Sacchi Saheli ✨', style: TextStyle(fontSize: 16, color: Colors.white70)),
-          ],
+        decoration: const BoxDecoration(
+          image: DecorationImage(image: AssetImage('image_280732b5.jpg'), fit: BoxFit.cover),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.pink.shade900.withOpacity(0.5), Colors.pink.shade700.withOpacity(0.75)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text('SheCare Sakhi', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white, shadows: [Shadow(blurRadius: 8, color: Colors.black54)])),
+              SizedBox(height: 8),
+              Text('Har Nari Ki Sacchi Saheli ✨', style: TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.w500)),
+              SizedBox(height: 70),
+            ],
+          ),
         ),
       ),
     );
@@ -207,7 +217,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
 
 
   final Map<String, Map<String, String>> tr = {
-    'EN': {'welcome': 'Hello Beautiful! ✨', 'quoteTitle': 'Thought of the Day', 'alarm': 'Alarm & Reminder', 'water': 'Water Tracker', 'tiffin': 'Kids Tiffin', 'recipe': 'Quick Recipes', 'kitchen': 'Kitchen & Home', 'beauty': 'Health & Beauty', 'salon': 'Home Salon', 'bhakti': 'Bhakti Path', 'period': 'Period Tracker', 'diary': 'Secret Diary', 'grocery': 'Grocery List', 'video': 'AI Video Guide', 'budget': 'Smart Budget', 'rate': 'Rate & Review'},
+    'EN': {'welcome': 'Hello Beautiful! ✨', 'quoteTitle': 'आज का सुविचार', 'alarm': 'Alarm & Reminder', 'water': 'Water Tracker', 'tiffin': 'Kids Tiffin', 'recipe': 'Quick Recipes', 'kitchen': 'Kitchen & Home', 'beauty': 'Health & Beauty', 'salon': 'Home Salon', 'bhakti': 'Bhakti Path', 'period': 'Period Tracker', 'diary': 'Secret Diary', 'grocery': 'Grocery List', 'video': 'AI Video Guide', 'budget': 'Smart Budget', 'rate': 'Rate & Review'},
     'HI': {'welcome': 'नमस्ते सखी! ✨', 'quoteTitle': 'आज का सुविचार', 'alarm': 'अलार्म व रिमाइंडर', 'water': 'वाटर ट्रैकर', 'tiffin': 'किड्स टिफिन', 'recipe': 'झटपट रेसिपी', 'kitchen': 'किचन और होम', 'beauty': 'हेल्थ और ब्यूटी', 'salon': 'होम सैलून', 'bhakti': 'भक्ति पथ', 'period': 'पीरियड ट्रैकर', 'diary': 'सीक्रेट डायरी', 'grocery': 'राशन लिस्ट', 'video': 'AI वीडियो गाइड', 'budget': 'स्मार्ट बजट', 'rate': 'रेटिंग व सुझाव'},
     'MR': {'welcome': 'नमस्कार सखी! ✨', 'quoteTitle': 'आजचा सुविचार', 'alarm': 'अलार्म आणि रिमाइंडर', 'water': 'वॉटर ट्रॅकर', 'tiffin': 'किड्स टिफिन', 'recipe': 'झटपट रेसिपी', 'kitchen': 'किचन आणि होम', 'beauty': 'हेल्थ आणि ब्युटी', 'salon': 'होम सलून', 'bhakti': 'भक्ती पथ', 'period': 'मासिक पाळी ट्रॅकर', 'diary': 'सीक्रेट डायरी', 'grocery': 'किराणा यादी', 'video': 'AI व्हिडिओ गाईड', 'budget': 'स्मार्ट बजेट', 'rate': 'रेटिंग आणि अभिप्राय'},
     'PA': {'welcome': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ ਸਖੀ! ✨', 'quoteTitle': 'ਅੱਜ ਦਾ ਵਿਚਾਰ', 'alarm': 'ਅਲਾਰਮ ਤੇ ਰਿਮਾਈਂਡਰ', 'water': 'ਪਾਣੀ ਟਰੈਕਰ', 'tiffin': 'ਕਿਡਜ਼ ਟਿਫਿਨ', 'recipe': 'ਝਟਪਟ ਰੈਸਿਪੀ', 'kitchen': 'ਰਸੋਈ ਤੇ ਘਰ', 'beauty': 'ਸਿਹਤ ਤੇ ਬਿਊਟੀ', 'salon': 'ਹੋਮ ਸੈਲੂਨ', 'bhakti': 'ਭਗਤੀ ਮਾਰਗ', 'period': 'ਪੀਰੀਅਡ ਟਰੈਕਰ', 'diary': 'ਸੀਕ੍ਰੇਟ ਡਾਇਰੀ', 'grocery': 'ਰਾਸ਼ਨ ਲਿਸਟ', 'video': 'AI ਵੀਡੀਓ ਗਾਈਡ', 'budget': 'ਸਮਾਰਟ ਬਜਟ', 'rate': 'ਰੇਟਿੰਗ ਤੇ ਸੁਝਾਅ'},
@@ -218,12 +228,10 @@ class _HomeDashboardState extends State<HomeDashboard> {
 
 
   final List<String> quotes = [
-    "Believe in yourself; you can turn every challenge into a triumph. 💪💖",
-    "Your smile is your prettiest ornament, wear it every day. 🌸✨",
-    "Every new morning is a fresh chance to fulfill your dreams. 🌟🦋",
+    "खुद पर विश्वास रखें, आप हर मुश्किल को आसान बना सकती हैं। 💪💖",
+    "मुस्कराहट आपका सबसे खूबसूरत गहना है, इसे हमेशा पहने रखें। 🌸✨",
+    "हर नया दिन एक नया मौका है अपने सपनों को पूरा करने का। 🌟🦋",
   ];
-
-
   @override
   void initState() {
     super.initState();
@@ -258,6 +266,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
       await launchUrl(Uri.parse("https://whatsapp.com"), mode: LaunchMode.externalApplication);
     }
   }
+
+
   void _openSettings() {
     showModalBottomSheet(
       context: context,
@@ -301,6 +311,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
       {'title': t['budget']!, 'icon': '💰', 'page': const BudgetPage()},
       {'title': t['rate']!, 'icon': '⭐', 'page': const RatePage()},
     ];
+
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(fontScale)),
       child: Scaffold(
@@ -458,9 +470,10 @@ class SOSPage extends StatefulWidget {
 class _SOSPageState extends State<SOSPage> {
   final TextEditingController _num1Ctrl = TextEditingController();
   final TextEditingController _num2Ctrl = TextEditingController();
+  String savedNum1 = '';
+  String savedNum2 = '';
   int tapCount = 0;
-  String savedStatus = "";
-  String statusMsg = "Press 3-TAP SOS button 3 times quickly in emergency 👇";
+  String statusMsg = "आपातकाल (Emergency) में नीचे लाल बटन को 3 बार तेज़ी से दबाएं 👇";
 
 
   @override
@@ -473,19 +486,24 @@ class _SOSPageState extends State<SOSPage> {
   Future<void> _loadSavedNumbers() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _num1Ctrl.text = prefs.getString('sos_num1') ?? '';
-      _num2Ctrl.text = prefs.getString('sos_num2') ?? '';
-      if (_num1Ctrl.text.isNotEmpty) savedStatus = "Saved Primary: +91 ${_num1Ctrl.text} ✅";
+      savedNum1 = prefs.getString('sos_num1') ?? '';
+      savedNum2 = prefs.getString('sos_num2') ?? '';
     });
   }
 
 
   Future<void> _saveNumbers() async {
+    final n1 = _num1Ctrl.text.trim();
+    final n2 = _num2Ctrl.text.trim();
+    if (n1.length != 10 && n2.length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('कृपया कम से कम एक 10-अंकों का मोबाइल नंबर डालें')));
+      return;
+    }
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('sos_num1', _num1Ctrl.text.trim());
-    await prefs.setString('sos_num2', _num2Ctrl.text.trim());
-    setState(() => savedStatus = "Numbers Permanently Saved! ✅");
-    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✅ Emergency Contacts Saved!')));
+    if (n1.length == 10) { await prefs.setString('sos_num1', n1); savedNum1 = n1; _num1Ctrl.clear(); }
+    if (n2.length == 10) { await prefs.setString('sos_num2', n2); savedNum2 = n2; _num2Ctrl.clear(); }
+    setState(() {});
+    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✅ फैमिली नंबर स्थायी रूप से सेव हो गए!')));
   }
 
 
@@ -499,39 +517,40 @@ class _SOSPageState extends State<SOSPage> {
       }
     }
   }
+
+
   Future<void> _handleTripleTap() async {
     setState(() => tapCount++);
     if (tapCount < 3) {
-      setState(() => statusMsg = "Tap ${3 - tapCount} more times to send Live Location Alert...");
+      setState(() => statusMsg = "अलर्ट भेजने के लिए ${3 - tapCount} बार और टच करें...");
       return;
     }
     setState(() {
       tapCount = 0;
-      statusMsg = "🚨 Silent Alert Triggered! Fetching GPS Location...";
+      statusMsg = "🚨 लोकेशन निकाली जा रही है, कृपया 2 सेकंड रुकें...";
     });
 
 
-    String locLink = "GPS disabled on device";
+    String locLink = "GPS Location Off";
     try {
       LocationPermission perm = await Geolocator.checkPermission();
       if (perm == LocationPermission.denied) perm = await Geolocator.requestPermission();
       if (perm == LocationPermission.whileInUse || perm == LocationPermission.always) {
-        Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+        Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium, timeLimit: const Duration(seconds: 4));
         locLink = "https://google.com{pos.latitude},${pos.longitude}";
       }
     } catch (_) {}
 
 
-    final String fam1 = _num1Ctrl.text.trim();
-    final String msg = Uri.encodeComponent("🚨 URGENT EMERGENCY! I need immediate help! My Live GPS Location: $locLink - Sent via SheCare Sakhi");
+    final String target = savedNum1.length == 10 ? savedNum1 : savedNum2;
+    final String msg = Uri.encodeComponent("🚨 URGENT EMERGENCY! मुझे तुरंत मदद चाहिए! मेरी लाइव लोकेशन: $locLink - Sent via SheCare Sakhi");
 
 
-    if (fam1.length == 10) {
-      final Uri waDirect = Uri.parse("whatsapp://send?phone=91$fam1&text=$msg");
-      if (await canLaunchUrl(waDirect)) {
-        await launchUrl(waDirect);
-      } else {
-        await launchUrl(Uri.parse("sms:$fam1?body=$msg"));
+    if (target.length == 10) {
+      try {
+        await launchUrl(Uri.parse("https://whatsapp.com"), mode: LaunchMode.externalApplication);
+      } catch (_) {
+        await launchUrl(Uri.parse("sms:$target?body=$msg"));
       }
     } else {
       await launchUrl(Uri(scheme: 'tel', path: '112'));
@@ -547,6 +566,24 @@ class _SOSPageState extends State<SOSPage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            if (savedNum1.isNotEmpty || savedNum2.isNotEmpty)
+              Card(
+                color: Colors.green.shade50,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: BorderSide(color: Colors.green.shade300)),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('✅ Saved Trusted Family Contacts:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                      const SizedBox(height: 6),
+                      if (savedNum1.isNotEmpty) Text('👤 Primary Contact: +91 $savedNum1', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                      if (savedNum2.isNotEmpty) Text('👤 Backup Contact: +91 $savedNum2', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+            const SizedBox(height: 10),
             Card(
               color: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: BorderSide(color: Colors.red.shade200)),
@@ -554,8 +591,7 @@ class _SOSPageState extends State<SOSPage> {
                 padding: const EdgeInsets.all(14),
                 child: Column(
                   children: [
-                    const Text('Save Trusted Family Numbers:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 15)),
-                    if (savedStatus.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: Text(savedStatus, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12))),
+                    const Text('Add / Update Family Numbers:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 15)),
                     const SizedBox(height: 10),
                     Row(children: [Expanded(child: TextField(controller: _num1Ctrl, keyboardType: TextInputType.phone, maxLength: 10, decoration: const InputDecoration(labelText: 'Family Number 1', border: OutlineInputBorder()))), IconButton(icon: const Icon(Icons.contacts, color: Colors.red, size: 30), onPressed: () => _pickContact(_num1Ctrl))]),
                     const SizedBox(height: 8),
@@ -566,14 +602,14 @@ class _SOSPageState extends State<SOSPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Text(statusMsg, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.red)),
             const SizedBox(height: 14),
+            Text(statusMsg, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.red)),
+            const SizedBox(height: 12),
             GestureDetector(
               onTap: _handleTripleTap,
-              child: CircleAvatar(radius: 72, backgroundColor: Colors.red.shade800, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('🚨', style: TextStyle(fontSize: 40)), const Text('3-TAP SOS', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17)), Text('Taps: $tapCount / 3', style: const TextStyle(color: Colors.white70, fontSize: 12))])),
+              child: CircleAvatar(radius: 68, backgroundColor: Colors.red.shade800, child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('🚨', style: TextStyle(fontSize: 38)), const Text('3-TAP SOS', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)), Text('Taps: $tapCount / 3', style: const TextStyle(color: Colors.white70, fontSize: 12))])),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 16),
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.black87, foregroundColor: Colors.white), onPressed: () => launchUrl(Uri(scheme: 'tel', path: '112')), icon: const Icon(Icons.local_police), label: const Text('Police (112)')), ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.pink, foregroundColor: Colors.white), onPressed: () => launchUrl(Uri(scheme: 'tel', path: '1091')), icon: const Icon(Icons.support_agent), label: const Text('Helpline (1091)'))])
           ],
         ),
@@ -607,7 +643,7 @@ class _SmartContentPageState extends State<SmartContentPage> {
   void _openAddDialog() {
     final pinCtrl = TextEditingController();
     final titleCtrl = TextEditingController();
-    final tagCtrl = TextEditingController(text: '⏱️ 10 Mins • 🌟 Special');
+    final tagCtrl = TextEditingController(text: '⏱️ 10 मिनट • 🌟 खास');
     final ingCtrl = TextEditingController();
     final stepCtrl = TextEditingController();
     final ytCtrl = TextEditingController();
@@ -616,16 +652,16 @@ class _SmartContentPageState extends State<SmartContentPage> {
     showDialog(
       context: context,
       builder: (c) => AlertDialog(
-        title: Text(widget.adminOnlyAdd ? '🔒 Admin Verification Required' : '➕ Add New Content'),
+        title: Text(widget.adminOnlyAdd ? '🔒 Admin Verification Required' : '➕ नया कंटेंट जोड़ें'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (widget.adminOnlyAdd) TextField(controller: pinCtrl, obscureText: true, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Enter Secret Admin PIN')),
-              TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Title (with Emoji)')),
-              TextField(controller: tagCtrl, decoration: const InputDecoration(labelText: 'Badge (e.g. 10 Mins • Healthy)')),
-              TextField(controller: ingCtrl, maxLines: 4, decoration: const InputDecoration(labelText: 'Ingredients / Key Highlights')),
-              TextField(controller: stepCtrl, maxLines: 6, decoration: const InputDecoration(labelText: 'Paste Full Steps / Method / Article')),
+              TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'शीर्षक (Emoji के साथ)')),
+              TextField(controller: tagCtrl, decoration: const InputDecoration(labelText: 'बैज (जैसे: 10 मिनट • हेल्दी)')),
+              TextField(controller: ingCtrl, maxLines: 4, decoration: const InputDecoration(labelText: 'मुख्य सामग्री / हाइलाइट्स')),
+              TextField(controller: stepCtrl, maxLines: 6, decoration: const InputDecoration(labelText: 'पूरा तरीका / विधि पेस्ट करें')),
               TextField(controller: ytCtrl, decoration: const InputDecoration(labelText: 'YouTube Video Link (Optional)')),
             ],
           ),
@@ -635,12 +671,12 @@ class _SmartContentPageState extends State<SmartContentPage> {
           ElevatedButton(
             onPressed: () {
               if (widget.adminOnlyAdd && pinCtrl.text != '2026') {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ Incorrect Admin PIN!')));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ गलत Admin PIN!')));
                 return;
               }
               final link = ytCtrl.text.trim();
               if (link.isNotEmpty && !link.contains('youtube.com') && !link.contains('youtu.be')) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Only valid YouTube links allowed!')));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ केवल वैध YouTube लिंक ही डालें!')));
                 return;
               }
               if (titleCtrl.text.isNotEmpty && stepCtrl.text.isNotEmpty) {
@@ -654,6 +690,8 @@ class _SmartContentPageState extends State<SmartContentPage> {
       ),
     );
   }
+
+
   void _playVideoInApp(String url) {
     final videoId = YoutubePlayer.convertUrlToId(url);
     if (videoId == null) return;
@@ -676,7 +714,7 @@ class _SmartContentPageState extends State<SmartContentPage> {
       appBar: AppBar(title: Text(widget.title), backgroundColor: widget.color, foregroundColor: Colors.white, actions: [IconButton(icon: const Icon(Icons.add_circle, size: 28), onPressed: _openAddDialog)]),
       body: Column(
         children: [
-          Padding(padding: const EdgeInsets.all(10), child: TextField(onChanged: (v) => setState(() => query = v), decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search...', border: OutlineInputBorder(), filled: true, fillColor: Colors.white))),
+          Padding(padding: const EdgeInsets.all(10), child: TextField(onChanged: (v) => setState(() => query = v), decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'खोजें (Search)...', border: OutlineInputBorder(), filled: true, fillColor: Colors.white))),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -694,16 +732,16 @@ class _SmartContentPageState extends State<SmartContentPage> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(color: widget.color.withOpacity(0.12), borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item['title']!, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: widget.color)), const SizedBox(height: 4), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(10)), child: Text(item['tag'] ?? '✨ Featured', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)))]),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item['title']!, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: widget.color)), const SizedBox(height: 4), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(10)), child: Text(item['tag'] ?? '✨ खास', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)))]),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(14),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (item['ing'] != null && item['ing']!.isNotEmpty) ...[Container(width: double.infinity, padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(10)), child: Text("📌 Key Ingredients / Highlights:\n${item['ing']!}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500))), const SizedBox(height: 10)],
-                            Text("📝 Method / Details:\n${item['steps']!}", style: const TextStyle(fontSize: 14, height: 1.45)),
-                            if (item['yt'] != null && item['yt']!.isNotEmpty) ...[const SizedBox(height: 10), ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white), onPressed: () => _playVideoInApp(item['yt']!), icon: const Icon(Icons.play_circle_fill), label: const Text('Watch Video in App ▶️'))]
+                            if (item['ing'] != null && item['ing']!.isNotEmpty) ...[Container(width: double.infinity, padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(10)), child: Text("📌 मुख्य सामग्री / हाइलाइट्स:\n${item['ing']!}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500))), const SizedBox(height: 10)],
+                            Text("📝 बनाने की विधि / विवरण:\n${item['steps']!}", style: const TextStyle(fontSize: 14, height: 1.45)),
+                            if (item['yt'] != null && item['yt']!.isNotEmpty) ...[const SizedBox(height: 10), ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white), onPressed: () => _playVideoInApp(item['yt']!), icon: const Icon(Icons.play_circle_fill), label: const Text('ऐप में वीडियो देखें ▶️'))]
                           ],
                         ),
                       ),
@@ -716,6 +754,82 @@ class _SmartContentPageState extends State<SmartContentPage> {
         ],
       ),
     );
+  }
+}
+class KidsTiffinPage extends StatelessWidget {
+  const KidsTiffinPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SmartContentPage(title: '🍱 Kids Tiffin Special', color: Colors.green.shade700, initialItems: const [
+      {'title': '🌮 मिनी आलू-पनीर परांठा रोल', 'tag': '⏱️ 15 मिनट • 🌟 बच्चों का पसंदीदा', 'ing': '• गेहूँ का आटा (गूँथा हुआ)\n• उबले हुए आलू और कद्दूकस किया पनीर\n• बारीक कटा हरा धनिया, जीरा पाउडर और हल्का नमक', 'steps': '1. आटे की पतली रोटी बेलकर तवे पर हल्का सेंक लें।\n2. आलू और पनीर का चटपटा मसाला रोटी पर फैलाएं।\n3. टाइट रोल बनाकर छोटे टुकड़ों में काटें और टिफिन में पैक करें।', 'yt': ''},
+      {'title': '🥞 सूजी-वेजी मिनी उत्तपम', 'tag': '⏱️ 10 मिनट • 🥗 हेल्दी नाश्ता', 'ing': '• 1 कप सूजी और आधा कप ताज़ा दही\n• बारीक कटी गाजर, शिमला मिर्च और टमाटर', 'steps': '1. सूजी, दही और पानी मिलाकर गाढ़ा घोल तैयार करें।\n2. तवे पर हल्का घी लगाकर छोटे-छोटे उत्तपम फैलाएं, ऊपर सब्ज़ियाँ डालें और सुनहरा सेंक लें।', 'yt': ''},
+    ]);
+  }
+}
+
+
+class RecipePage extends StatelessWidget {
+  const RecipePage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SmartContentPage(title: '🍲 Quick Recipes', color: Colors.orange.shade800, initialItems: const [
+      {'title': '🍜 5-मिनट वेजी मसाला ओट्स', 'tag': '⏱️ 5 मिनट • 🔥 झटपट रेसिपी', 'ing': '• 1 कप मसाला ओट्स\n• बारीक कटा प्याज़, टमाटर और हरी मटर', 'steps': '1. कढ़ाई में थोड़ा तेल गर्म करके सब्ज़ियों को 1 मिनट भूनें।\n2. डेढ़ कप पानी और ओट्स डालकर 3 मिनट तक पकाएं, गरमागरम तैयार है!', 'yt': ''},
+    ]);
+  }
+}
+
+
+class KitchenPage extends StatelessWidget {
+  const KitchenPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SmartContentPage(title: '🏡 Kitchen & Home Hacks', color: Colors.teal.shade700, initialItems: const [
+      {'title': '🍋 फ्रिज की बदबू हटाने का आसान उपाय', 'tag': '✨ स्मार्ट किचन हैक', 'ing': '• 2 चम्मच बेकिंग सोडा या आधा कटा नींबू', 'steps': '1. एक छोटी कटोरी में बेकिंग सोडा रखकर फ्रिज के कोने में रख दें।\n2. यह कुछ ही घंटों में फ्रिज की सारी दुर्गंध सोख लेगा।', 'yt': ''},
+    ]);
+  }
+}
+
+
+class BeautyPage extends StatelessWidget {
+  const BeautyPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SmartContentPage(title: '💄 Health & Beauty Care', color: Colors.pink.shade600, initialItems: const [
+      {'title': '✨ बेसन और हल्दी का नेचुरल ग्लो पैक', 'tag': '🌿 100% प्राकृतिक • 15 मिनट', 'ing': '• 2 चम्मच बेसन और चुटकी भर कस्तूरी हल्दी\n• 2 चम्मच गुलाब जल या कच्चा दूध', 'steps': '1. सभी चीज़ों को मिलाकर गाढ़ा पेस्ट बनाएं और चेहरे पर लगाएं।\n2. 15 मिनट बाद ठंडे पानी से धो लें, चेहरे पर तुरंत निखार आ जाएगा।', 'yt': ''},
+    ]);
+  }
+}
+
+
+class HomeSalonPage extends StatelessWidget {
+  const HomeSalonPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SmartContentPage(title: '💅 Home Salon & Makeup', color: Colors.purple.shade700, adminOnlyAdd: true, initialItems: const [
+      {'title': '💋 5-मिनट पार्टी ग्लो मेकअप गाइड', 'tag': '💄 पार्टी रेडी • 5 मिनट', 'ing': '• मॉइस्चराइज़र, प्राइमर और बीबी क्रीम\n• काजल, मस्कारा और न्यूड लिपस्टिक', 'steps': '1. चेहरे को साफ़ करके मॉइस्चराइज़र और प्राइमर लगाएं।\n2. हल्की बीबी क्रीम ब्लेंड करें और गालों पर हल्का गुलाबी ब्लश लगाएं।\n3. काजल, मस्कारा और लिपस्टिक से अपना पार्टी लुक पूरा करें।', 'yt': ''},
+    ]);
+  }
+}
+
+
+class BhaktiPathPage extends StatelessWidget {
+  const BhaktiPathPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SmartContentPage(title: '🛕 Bhakti Path & Aarti', color: Colors.deepOrange.shade700, adminOnlyAdd: true, initialItems: const [
+      {'title': '🪔 श्री गणेश जी की आरती (ऑफलाइन)', 'tag': '🕉️ संपूर्ण आरती व पूजा विधि', 'ing': '• घी का दीपक, कपूर, दूर्वा घास और मोदक', 'steps': 'जय गणेश जय गणेश जय गणेश देवा,\nमाता जाकी पार्वती पिता महादेवा।\nएकदंत दयावंत चार भुजा धारी,\nमाथे सिंदूर सोहे मूसे की सवारी॥\n\nपूजा विधि: सुबह स्नान के बाद स्वच्छ वस्त्र पहनकर गणपति जी को दूर्वा व मोदक अर्पित करें और आरती करें।', 'yt': ''},
+    ]);
+  }
+}
+
+
+class VideoPage extends StatelessWidget {
+  const VideoPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SmartContentPage(title: '🎬 AI Video Guide', color: Colors.deepPurple, adminOnlyAdd: true, initialItems: const [
+      {'title': '🥣 2-मिनट चावल के आटे का इंस्टेंट स्क्रब', 'tag': '✨ क्विक स्किनकेयर', 'ing': '• 1 चम्मच चावल का आटा और 1 चम्मच ताज़ा दही', 'steps': '1. चावल के आटे और दही को अच्छे से मिलाएं।\n2. चेहरे पर 2 मिनट हल्के हाथों से गोलाई में मसाज करें और धो लें।', 'yt': ''},
+    ]);
   }
 }
 class SecretDiaryPage extends StatefulWidget {
@@ -755,6 +869,8 @@ class _SecretDiaryPageState extends State<SecretDiaryPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('diary_notes', notes);
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -762,13 +878,7 @@ class _SecretDiaryPageState extends State<SecretDiaryPage> {
         title: const Text('📔 Personal Secret Diary'),
         backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
-        actions: unlocked
-            ? [
-                IconButton(icon: const Icon(Icons.text_decrease), onPressed: () => setState(() { if (diaryFontSize > 12) diaryFontSize -= 2; })),
-                IconButton(icon: const Icon(Icons.text_increase), onPressed: () => setState(() { if (diaryFontSize < 24) diaryFontSize += 2; })),
-                IconButton(icon: const Icon(Icons.format_italic), onPressed: () => setState(() => isItalic = !isItalic)),
-              ]
-            : null,
+        actions: unlocked ? [IconButton(icon: const Icon(Icons.text_decrease), onPressed: () => setState(() { if (diaryFontSize > 12) diaryFontSize -= 2; })), IconButton(icon: const Icon(Icons.text_increase), onPressed: () => setState(() { if (diaryFontSize < 24) diaryFontSize += 2; })), IconButton(icon: const Icon(Icons.format_italic), onPressed: () => setState(() => isItalic = !isItalic))] : null,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -784,19 +894,10 @@ class _SecretDiaryPageState extends State<SecretDiaryPage> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, foregroundColor: Colors.white),
                     onPressed: () async {
-                      if (_pinCtrl.text.length != 4) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a 4-digit PIN')));
-                        return;
-                      }
-                      if (storedPin == null) {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString('diary_pin', _pinCtrl.text);
-                        setState(() { storedPin = _pinCtrl.text; unlocked = true; });
-                      } else if (_pinCtrl.text == storedPin) {
-                        setState(() => unlocked = true);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ Wrong PIN! Try again.')));
-                      }
+                      if (_pinCtrl.text.length != 4) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter a 4-digit PIN'))); return; }
+                      if (storedPin == null) { final prefs = await SharedPreferences.getInstance(); await prefs.setString('diary_pin', _pinCtrl.text); setState(() { storedPin = _pinCtrl.text; unlocked = true; }); }
+                      else if (_pinCtrl.text == storedPin) { setState(() => unlocked = true); }
+                      else { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ Wrong PIN! Try again.'))); }
                     },
                     child: Text(storedPin == null ? 'Set PIN & Open Diary 🔐' : 'Unlock Diary 🔓'),
                   )
@@ -804,95 +905,15 @@ class _SecretDiaryPageState extends State<SecretDiaryPage> {
               )
             : Column(
                 children: [
-                  TextField(controller: _noteCtrl, maxLines: 2, decoration: const InputDecoration(labelText: 'Write your private thoughts...', border: OutlineInputBorder())),
+                  TextField(controller: _noteCtrl, maxLines: 2, decoration: const InputDecoration(labelText: 'अपनी निजी बात लिखें...', border: OutlineInputBorder())),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, foregroundColor: Colors.white), onPressed: () { if (_noteCtrl.text.isNotEmpty) { setState(() { notes.insert(0, _noteCtrl.text); _noteCtrl.clear(); }); _saveNotes(); } }, icon: const Icon(Icons.save), label: const Text('Save Private Note 💖')),
                   const Divider(),
-                  Expanded(
-                    child: notes.isEmpty
-                        ? const Center(child: Text('Your diary is completely empty & private. ✨', style: TextStyle(color: Colors.black54)))
-                        : ListView.builder(itemCount: notes.length, itemBuilder: (c, i) => Card(child: ListTile(leading: const Text('🔒'), title: Text(notes[i], style: TextStyle(fontSize: diaryFontSize, fontStyle: isItalic ? FontStyle.italic : FontStyle.normal)), trailing: IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () { setState(() => notes.removeAt(i)); _saveNotes(); })))),
-                  ),
+                  Expanded(child: notes.isEmpty ? const Center(child: Text('आपकी डायरी अभी बिल्कुल खाली और सुरक्षित है। ✨', style: TextStyle(color: Colors.black54))) : ListView.builder(itemCount: notes.length, itemBuilder: (c, i) => Card(child: ListTile(leading: const Text('🔒'), title: Text(notes[i], style: TextStyle(fontSize: diaryFontSize, fontStyle: isItalic ? FontStyle.italic : FontStyle.normal)), trailing: IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red), onPressed: () { setState(() => notes.removeAt(i)); _saveNotes(); }))))),
                 ],
               ),
       ),
     );
-  }
-}
-class KidsTiffinPage extends StatelessWidget {
-  const KidsTiffinPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SmartContentPage(title: '🍱 Kids Tiffin Special', color: Colors.green.shade700, initialItems: const [
-      {'title': '🌮 Mini Aloo-Paneer Paratha Roll', 'tag': '⏱️ 15 Mins • 🌟 Kids Favourite', 'ing': '• Whole wheat dough\n• Boiled mashed potatoes & grated paneer\n• Fresh coriander & mild spices', 'steps': '1. Roll a thin chapati and roast lightly.\n2. Spread spiced aloo-paneer filling.\n3. Roll tightly and cut into bite-sized pieces.', 'yt': ''},
-      {'title': '🥞 Suji-Veggie Mini Uttapam', 'tag': '⏱️ 10 Mins • 🥗 Healthy', 'ing': '• 1 cup Semolina (Suji) & 1/2 cup curd\n• Finely chopped carrots & capsicum', 'steps': '1. Mix suji, curd, and water into a smooth batter.\n2. Pour small rounds on a greased tawa, top with veggies & roast golden.', 'yt': ''},
-    ]);
-  }
-}
-
-
-class RecipePage extends StatelessWidget {
-  const RecipePage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SmartContentPage(title: '🍲 Quick Recipes', color: Colors.orange.shade800, initialItems: const [
-      {'title': '🍜 5-Min Veggie Masala Oats', 'tag': '⏱️ 5 Mins • 🔥 Instant', 'ing': '• 1 cup Masala Oats\n• Chopped onion, tomato & peas', 'steps': '1. Saute veggies for 1 minute.\n2. Add 1.5 cups water and oats, cook for 3 minutes.', 'yt': ''},
-    ]);
-  }
-}
-
-
-class KitchenPage extends StatelessWidget {
-  const KitchenPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SmartContentPage(title: '🏡 Kitchen & Home Hacks', color: Colors.teal.shade700, initialItems: const [
-      {'title': '🍋 Fridge Odor Removal Trick', 'tag': '✨ Smart Home Hack', 'ing': '• 2 tbsp Baking Soda OR half cut lemon', 'steps': '1. Place an open bowl of baking soda in the corner of your fridge.\n2. It absorbs all strong food smells within hours.', 'yt': ''},
-    ]);
-  }
-}
-
-
-class BeautyPage extends StatelessWidget {
-  const BeautyPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SmartContentPage(title: '💄 Health & Beauty Care', color: Colors.pink.shade600, initialItems: const [
-      {'title': '✨ Besan & Haldi Natural Glow Pack', 'tag': '🌿 100% Natural • 15 Mins', 'ing': '• 2 tbsp Gram Flour (Besan)\n• Pinch of wild turmeric & rose water', 'steps': '1. Mix into a smooth paste and apply evenly on face.\n2. Wash off with cool water after 15 minutes for instant glow.', 'yt': ''},
-    ]);
-  }
-}
-
-
-class HomeSalonPage extends StatelessWidget {
-  const HomeSalonPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SmartContentPage(title: '💅 Home Salon & Makeup', color: Colors.purple.shade700, adminOnlyAdd: true, initialItems: const [
-      {'title': '💋 5-Min Party Glow Makeup Guide', 'tag': '💄 Party Ready • 5 Mins', 'ing': '• Moisturizer, Primer & BB Cream\n• Kajal, Mascara & Nude Lipstick', 'steps': '1. Prep skin with moisturizer and primer.\n2. Blend BB cream evenly and add soft pink blush.\n3. Finish with kajal, mascara, and lip tint.', 'yt': ''},
-    ]);
-  }
-}
-
-
-class BhaktiPathPage extends StatelessWidget {
-  const BhaktiPathPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SmartContentPage(title: '🛕 Bhakti Path & Aarti', color: Colors.deepOrange.shade700, adminOnlyAdd: true, initialItems: const [
-      {'title': '🪔 Shri Ganesh Ji Ki Aarti', 'tag': '🕉️ Offline Aarti • Puja Vidhi', 'ing': '• Deepak, Kapur, Durva Grass & Modak', 'steps': 'Jai Ganesh Jai Ganesh Jai Ganesh Deva,\nMata Jaki Parvati Pita Mahadeva...\n\nPuja Vidhi: Light a ghee lamp in the morning and offer durva grass.', 'yt': ''},
-    ]);
-  }
-}
-
-
-class VideoPage extends StatelessWidget {
-  const VideoPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SmartContentPage(title: '🎬 AI Video Guide', color: Colors.deepPurple, adminOnlyAdd: true, initialItems: const [
-      {'title': '🥣 2-Min Rice Flour Instant Glow Scrub', 'tag': '✨ Quick Skincare', 'ing': '• 1 tbsp Rice Flour & 1 tbsp Fresh Curd', 'steps': '1. Mix rice flour and curd.\n2. Massage gently in circular motions for 2 minutes & rinse.', 'yt': ''},
-    ]);
   }
 }
 class AlarmPage extends StatefulWidget {
@@ -945,7 +966,7 @@ class _WaterPageState extends State<WaterPage> {
             const SizedBox(height: 12),
             Text('$glasses / 8 Glasses', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.blue)),
             const SizedBox(height: 20),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [ElevatedButton(onPressed: () { setState(() => glasses++); if (glasses == 8) showDialog(context: context, builder: (c) => AlertDialog(title: const Text('🎉 Goal Achieved!'), content: const Text('Congratulations! You completed your 8-glass daily water target! 💧✨'), actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('Yay! 💖'))])); }, child: const Text('+ 1 Glass')), const SizedBox(width: 12), TextButton(onPressed: () => setState(() => glasses = 0), child: const Text('Reset'))]),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [ElevatedButton(onPressed: () { setState(() => glasses++); if (glasses == 8) showDialog(context: context, builder: (c) => AlertDialog(title: const Text('🎉 बधाई हो सखी!'), content: const Text('आपका आज का 8 गिलास पानी पीने का लक्ष्य पूरा हुआ! 💧✨'), actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('शुक्रिया 💖'))])); }, child: const Text('+ 1 Glass')), const SizedBox(width: 12), TextButton(onPressed: () => setState(() => glasses = 0), child: const Text('Reset'))]),
           ],
         ),
       ),
@@ -980,7 +1001,7 @@ class _BudgetPageState extends State<BudgetPage> {
                 const SizedBox(height: 12),
                 TextField(controller: _ctrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Enter Amount (₹)', border: OutlineInputBorder())),
                 const SizedBox(height: 10),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [ElevatedButton(onPressed: () { final val = double.tryParse(_ctrl.text); if (val != null && val > 0) { setState(() { total += val; _ctrl.clear(); }); if (total >= 5000) showDialog(context: context, builder: (c) => AlertDialog(title: const Text('⚠️ Budget Warning!'), content: const Text('Alert: Your total expense has crossed ₹5000!'), actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('OK'))])); } }, child: const Text('+ Add Expense')), const SizedBox(width: 10), TextButton(onPressed: () => setState(() => total = 0), child: const Text('Reset'))]),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [ElevatedButton(onPressed: () { final val = double.tryParse(_ctrl.text); if (val != null && val > 0) { setState(() { total += val; _ctrl.clear(); }); if (total >= 5000) showDialog(context: context, builder: (c) => AlertDialog(title: const Text('⚠️ बजट चेतावनी!'), content: const Text('सावधान! आपका कुल खर्च ₹5000 से ऊपर चला गया है।'), actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('ठीक है'))])); } }, child: const Text('+ Add Expense')), const SizedBox(width: 10), TextButton(onPressed: () => setState(() => total = 0), child: const Text('Reset'))]),
               ],
             ),
           ),
