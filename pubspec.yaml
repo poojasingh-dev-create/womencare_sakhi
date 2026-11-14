@@ -1,7 +1,7 @@
 name: womencare_sakhi
 description: SheCare Sakhi - Safety, Health & Home Companion
 publish_to: 'none'
-version: 3.0.0+3
+version: 4.0.0+4
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -12,6 +12,8 @@ dependencies:
   url_launcher: ^6.2.5
   geolocator: ^11.0.0
   youtube_player_flutter: ^9.0.1
+  shared_preferences: ^2.2.2
+  flutter_contacts: ^1.1.7
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
