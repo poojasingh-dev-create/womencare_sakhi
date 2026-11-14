@@ -20,3 +20,27 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "image_280732b5.jpg"
+name: womencare_sakhi
+description: SheCare Sakhi - Safety, Health & Home Companion
+publish_to: 'none'
+version: 3.0.0+3
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  url_launcher: ^6.2.5
+  geolocator: ^11.0.0
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "image_280732b5.jpg"
