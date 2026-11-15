@@ -320,6 +320,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
       {'title': t['budget']!, 'icon': '💰', 'page': const BudgetPage()},
       {'title': t['rate']!, 'icon': '⭐', 'page': const RatePage()},
     ];
+
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(fontScale)),
       child: Scaffold(
@@ -554,7 +556,9 @@ class _SOSPageState extends State<SOSPage> {
       if (perm == LocationPermission.denied) perm = await Geolocator.requestPermission();
       if (perm == LocationPermission.whileInUse || perm == LocationPermission.always) {
         Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium, timeLimit: const Duration(seconds: 4));
-        locLink = "https://google.com{pos.latitude},${pos.longitude}";
+        final double lat = pos.latitude;
+        final double lng = pos.longitude;
+        locLink = "https://google.com";
       }
     } catch (_) {}
 
@@ -698,13 +702,13 @@ class _SmartContentPageState extends State<SmartContentPage> {
         List<Map<String, String>> liveSheetItems = [];
         for (int i = 1; i < rows.length; i++) {
           final r = rows[i];
-          if (r.length >= 2 && r.toString().trim().toLowerCase() == widget.storageKey.toLowerCase()) {
+          if (r.length >= 2 && r.elementAt(0).toString().trim().toLowerCase() == widget.storageKey.toLowerCase()) {
             liveSheetItems.add({
-              'title': r.toString().trim(),
-              'tag': r.length > 2 && r.toString().trim().isNotEmpty ? r.toString().trim() : '✨ Live Update',
-              'ing': r.length > 3 ? r.toString().trim() : '',
-              'steps': r.length > 4 ? r.toString().trim() : '',
-              'yt': r.length > 5 ? r.toString().trim() : '',
+              'title': r.elementAt(1).toString().trim(),
+              'tag': r.length > 2 && r.elementAt(2).toString().trim().isNotEmpty ? r.elementAt(2).toString().trim() : '✨ Live Update',
+              'ing': r.length > 3 ? r.elementAt(3).toString().trim() : '',
+              'steps': r.length > 4 ? r.elementAt(4).toString().trim() : '',
+              'yt': r.length > 5 ? r.elementAt(5).toString().trim() : '',
             });
           }
         }
