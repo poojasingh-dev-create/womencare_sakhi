@@ -557,17 +557,24 @@ class _SOSPageState extends State<SOSPage> {
     });
 
 
-    String locLink = "GPS Location Off";
+        String locLink = "Location Unavailable";
     try {
       LocationPermission perm = await Geolocator.checkPermission();
       if (perm == LocationPermission.denied) perm = await Geolocator.requestPermission();
       if (perm == LocationPermission.whileInUse || perm == LocationPermission.always) {
-        Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium, timeLimit: const Duration(seconds: 4));
-        final double lat = pos.latitude;
-        final double lng = pos.longitude;
-        locLink = Uri.https('://google.com', '/', {'q': '$lat,$lng'}).toString();
+        Position? pos;
+        try {
+          pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low, timeLimit: const Duration(seconds: 10));
+        } catch (_) {
+          pos = await Geolocator.getLastKnownPosition();
+        }
+        if (pos != null) {
+          locLink = Uri.https('://google.com', '/', {'q': '${pos.latitude},${pos.longitude}'}).toString();
+        }
       }
     } catch (_) {}
+
+
 
 
     final String target = savedNum1.length == 10 ? savedNum1 : savedNum2;
@@ -697,10 +704,9 @@ class _SmartContentPageState extends State<SmartContentPage> {
 
     setState(() => isSyncing = true);
     try {
-      final res = await http.get(
-        kGoogleSheetCsvUri,
-        headers: {'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0'},
-      ).timeout(const Duration(seconds: 10));
+            final res = await http.get(kGoogleSheetCsvUri).timeout(const Duration(seconds: 15));
+
+
 
 
       if (res.statusCode == 200) {
