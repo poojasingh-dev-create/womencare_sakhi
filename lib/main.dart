@@ -557,14 +557,20 @@ class _SOSPageState extends State<SOSPage> {
     });
 
 
-        String locLink = "Location Unavailable";
+            String locLink = "Location Unavailable";
     try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        await Geolocator.openLocationSettings();
+      }
       LocationPermission perm = await Geolocator.checkPermission();
       if (perm == LocationPermission.denied) perm = await Geolocator.requestPermission();
       if (perm == LocationPermission.whileInUse || perm == LocationPermission.always) {
         Position? pos;
         try {
-          pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low, timeLimit: const Duration(seconds: 10));
+          pos = await Geolocator.getCurrentPosition(
+            locationSettings: const AndroidSettings(accuracy: LocationAccuracy.low, forceLocationManager: true, timeLimit: Duration(seconds: 12)),
+          );
         } catch (_) {
           pos = await Geolocator.getLastKnownPosition();
         }
@@ -572,7 +578,11 @@ class _SOSPageState extends State<SOSPage> {
           locLink = Uri.https('://google.com', '/', {'q': '${pos.latitude},${pos.longitude}'}).toString();
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      locLink = "LocErr: $e";
+    }
+
+
 
 
 
@@ -704,14 +714,12 @@ class _SmartContentPageState extends State<SmartContentPage> {
 
     setState(() => isSyncing = true);
     try {
-            final res = await http.get(kGoogleSheetCsvUri).timeout(const Duration(seconds: 15));
-
-
+                  final res = await http.get(kGoogleSheetCsvUri).timeout(const Duration(seconds: 15));
 
 
       if (res.statusCode == 200) {
         final String body = utf8.decode(res.bodyBytes).replaceAll('\r\n', '\n');
-        final List<List<dynamic>> rows = const CsvToListConverter(eol: '\n').convert(body);
+        final List<List<dynamic>> rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false).convert(body);
         List<Map<String, String>> liveSheetItems = [];
         for (int i = 1; i < rows.length; i++) {
           final r = rows[i];
@@ -732,13 +740,17 @@ class _SmartContentPageState extends State<SmartContentPage> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✅ Synced! Google Sheet से ${liveSheetItems.length} आइटम लोड हुए।')));
           }
         }
+      } else if (mounted && showToast) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('⚠️ Sheet Status: ${res.statusCode}')));
       }
     } catch (e) {
       if (mounted && showToast) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ इंटरनेट धीमा है, ऑफ़लाइन डेटा दिखाया जा रहा है।')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('⚠️ Error: $e'), duration: const Duration(seconds: 5)));
       }
     }
     if (mounted) setState(() => isSyncing = false);
+
+
   }
 
 
