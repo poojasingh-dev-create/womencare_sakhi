@@ -320,21 +320,19 @@ class _HomeDashboardState extends State<HomeDashboard> {
       {'title': t['budget']!, 'icon': '💰', 'page': const BudgetPage()},
       {'title': t['rate']!, 'icon': '⭐', 'page': const RatePage()},
     ];
-
-
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(fontScale)),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFFE91E63),
-          titleSpacing: 10,
-          title: const Text('🌸 SheCare Sakhi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+          titleSpacing: 8,
+          title: const Text('🌸 SheCare Sakhi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
           actions: [
             DropdownButton<String>(
               value: lang,
               dropdownColor: const Color(0xFFE91E63),
               underline: const SizedBox(),
-              icon: const Icon(Icons.language, color: Colors.white, size: 17),
+              icon: const Icon(Icons.language, color: Colors.white, size: 16),
               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
               items: const [
                 DropdownMenuItem(value: 'EN', child: Text('EN')),
@@ -350,16 +348,26 @@ class _HomeDashboardState extends State<HomeDashboard> {
             IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              icon: const Icon(Icons.share, color: Colors.white, size: 18),
+              icon: const Icon(Icons.refresh, color: Colors.white, size: 18),
+              onPressed: () {
+                setState(() => quoteIndex = (quoteIndex + 1) % quotes.length);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('🔄 App Refreshed & Synced! ✅'), duration: Duration(seconds: 1)));
+              },
+            ),
+            const SizedBox(width: 6),
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.share, color: Colors.white, size: 17),
               onPressed: () => shareDirectWhatsApp("🌸 Download *SheCare Sakhi* App - Your Daily Companion for Women Safety, Health & Home! 💖\n\n📲 Download Link:\nhttps://github.com\n\n✨ Har Nari Ki Sacchi Saheli!"),
             ),
-            const SizedBox(width: 8),
-            IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.settings, color: Colors.white, size: 18), onPressed: _openSettings),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
+            IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.settings, color: Colors.white, size: 17), onPressed: _openSettings),
+            const SizedBox(width: 6),
             Padding(
-              padding: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.only(right: 6),
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Colors.red.shade900, padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0), minimumSize: const Size(55, 30)),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: Colors.red.shade900, padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0), minimumSize: const Size(50, 28)),
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SOSPage())),
                 child: const Text('🚨 SOS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
               ),
@@ -368,92 +376,100 @@ class _HomeDashboardState extends State<HomeDashboard> {
         ),
         body: Container(
           decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFFFFF5F7), Color(0xFFFCE4EC)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                  decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFFFF8A80), Color(0xFFF48FB1)], begin: Alignment.topLeft, end: Alignment.bottomRight), borderRadius: BorderRadius.circular(18), boxShadow: [BoxShadow(color: Colors.pink.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 4))]),
-                  child: Column(
-                    children: [
-                      Text(t['welcome']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white)),
-                      const SizedBox(height: 6),
-                      Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Aapka din shubh ho.  •  ', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)), const Icon(Icons.access_time_filled, size: 15, color: Colors.white), const SizedBox(width: 4), Text(timeStr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white))]),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  color: Colors.white,
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: BorderSide(color: Colors.purple.shade100, width: 1.5)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
+          child: RefreshIndicator(
+            color: const Color(0xFFE91E63),
+            onRefresh: () async {
+              setState(() => quoteIndex = (quoteIndex + 1) % quotes.length);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('🔄 App Refreshed! ✅'), duration: Duration(seconds: 1)));
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                    decoration: BoxDecoration(gradient: const LinearGradient(colors: [Color(0xFFFF8A80), Color(0xFFF48FB1)], begin: Alignment.topLeft, end: Alignment.bottomRight), borderRadius: BorderRadius.circular(18), boxShadow: [BoxShadow(color: Colors.pink.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 4))]),
                     child: Column(
                       children: [
-                        Text('✨ ${t['quoteTitle']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF8E24AA))),
-                        const SizedBox(height: 10),
-                        Text('"${quotes[quoteIndex]}"', textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: Color(0xFF311B92), height: 1.4)),
-                        const SizedBox(height: 14),
-                        Row(mainAxisAlignment: MainAxisAlignment.center, children: [ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8E24AA), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10)), onPressed: () => setState(() => quoteIndex = (quoteIndex + 1) % quotes.length), icon: const Text('🌸'), label: const Text('Next Thought', style: TextStyle(fontWeight: FontWeight.bold))), const SizedBox(width: 10), ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF43A047), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10)), onPressed: () => shareDirectWhatsApp("${quotes[quoteIndex]}\n\nSent via SheCare Sakhi App 🌸"), icon: const Icon(Icons.share, size: 17), label: const Text('WhatsApp', style: TextStyle(fontWeight: FontWeight.bold))), const SizedBox(width: 6), IconButton(icon: Icon(isGridView ? Icons.view_list : Icons.grid_view, color: const Color(0xFFE91E63)), onPressed: () => setState(() => isGridView = !isGridView))])
+                        Text(t['welcome']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white)),
+                        const SizedBox(height: 6),
+                        Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Aapka din shubh ho.  •  ', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)), const Icon(Icons.access_time_filled, size: 15, color: Colors.white), const SizedBox(width: 4), Text(timeStr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white))]),
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                isGridView
-                    ? GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: menuItems.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 0.92),
-                        itemBuilder: (context, index) {
-                          final item = menuItems[index];
-                          return InkWell(
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['page'])),
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: Colors.pink.shade100), boxShadow: [BoxShadow(color: Colors.pink.withOpacity(0.08), blurRadius: 6)]),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Icon(Icons.favorite, color: const Color(0xFFF8BBD0), size: iconSize + 28),
-                                      Text(item['icon'], style: TextStyle(fontSize: iconSize * 0.65)),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(item['title'], textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Color(0xFF4A0E2E))),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: menuItems.length,
-                        itemBuilder: (context, index) {
-                          final item = menuItems[index];
-                          return Card(
-                            color: Colors.white,
-                            margin: const EdgeInsets.only(bottom: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: BorderSide(color: Colors.pink.shade100)),
-                            child: ListTile(
-                              leading: Stack(alignment: Alignment.center, children: [Icon(Icons.favorite, color: const Color(0xFFF8BBD0), size: iconSize + 18), Text(item['icon'], style: TextStyle(fontSize: iconSize * 0.55))]),
-                              title: Text(item['title'], style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4A0E2E))),
-                              trailing: const Icon(Icons.arrow_forward_ios, size: 15, color: Color(0xFFE91E63)),
-                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['page'])),
-                            ),
-                          );
-                        },
+                  const SizedBox(height: 12),
+                  Card(
+                    color: Colors.white,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: BorderSide(color: Colors.purple.shade100, width: 1.5)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Text('✨ ${t['quoteTitle']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF8E24AA))),
+                          const SizedBox(height: 10),
+                          Text('"${quotes[quoteIndex]}"', textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: Color(0xFF311B92), height: 1.4)),
+                          const SizedBox(height: 14),
+                          Row(mainAxisAlignment: MainAxisAlignment.center, children: [ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8E24AA), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10)), onPressed: () => setState(() => quoteIndex = (quoteIndex + 1) % quotes.length), icon: const Text('🌸'), label: const Text('Next Thought', style: TextStyle(fontWeight: FontWeight.bold))), const SizedBox(width: 10), ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF43A047), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10)), onPressed: () => shareDirectWhatsApp("${quotes[quoteIndex]}\n\nSent via SheCare Sakhi App 🌸"), icon: const Icon(Icons.share, size: 17), label: const Text('WhatsApp', style: TextStyle(fontWeight: FontWeight.bold))), const SizedBox(width: 6), IconButton(icon: Icon(isGridView ? Icons.view_list : Icons.grid_view, color: const Color(0xFFE91E63)), onPressed: () => setState(() => isGridView = !isGridView))])
+                        ],
                       ),
-              ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  isGridView
+                      ? GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: menuItems.length,
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 0.92),
+                          itemBuilder: (context, index) {
+                            final item = menuItems[index];
+                            return InkWell(
+                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['page'])),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: Colors.pink.shade100), boxShadow: [BoxShadow(color: Colors.pink.withOpacity(0.08), blurRadius: 6)]),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Icon(Icons.favorite, color: const Color(0xFFF8BBD0), size: iconSize + 28),
+                                        Text(item['icon'], style: TextStyle(fontSize: iconSize * 0.65)),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(item['title'], textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Color(0xFF4A0E2E))),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: menuItems.length,
+                          itemBuilder: (context, index) {
+                            final item = menuItems[index];
+                            return Card(
+                              color: Colors.white,
+                              margin: const EdgeInsets.only(bottom: 8),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: BorderSide(color: Colors.pink.shade100)),
+                              child: ListTile(
+                                leading: Stack(alignment: Alignment.center, children: [Icon(Icons.favorite, color: const Color(0xFFF8BBD0), size: iconSize + 18), Text(item['icon'], style: TextStyle(fontSize: iconSize * 0.55))]),
+                                title: Text(item['title'], style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4A0E2E))),
+                                trailing: const Icon(Icons.arrow_forward_ios, size: 15, color: Color(0xFFE91E63)),
+                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => item['page'])),
+                              ),
+                            );
+                          },
+                        ),
+                ],
+              ),
             ),
           ),
         ),
@@ -649,7 +665,7 @@ class _SmartContentPageState extends State<SmartContentPage> {
   }
 
 
-  Future<void> _loadAndSyncItems() async {
+  Future<void> _loadAndSyncItems({bool showToast = false}) async {
     final prefs = await SharedPreferences.getInstance();
     final String? cachedSheet = prefs.getString('sheet_cache_${widget.storageKey}');
     final String? localRaw = prefs.getString('saved_${widget.storageKey}');
@@ -670,9 +686,14 @@ class _SmartContentPageState extends State<SmartContentPage> {
 
     setState(() => isSyncing = true);
     try {
-      final res = await http.get(Uri.parse("$kGoogleSheetCsvUrl&t=${DateTime.now().millisecondsSinceEpoch}")).timeout(const Duration(seconds: 8));
+      final res = await http.get(
+        Uri.parse(kGoogleSheetCsvUrl),
+        headers: {'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0'},
+      ).timeout(const Duration(seconds: 10));
+
+
       if (res.statusCode == 200) {
-        final String body = utf8.decode(res.bodyBytes);
+        final String body = utf8.decode(res.bodyBytes).replaceAll('\r\n', '\n');
         final List<List<dynamic>> rows = const CsvToListConverter(eol: '\n').convert(body);
         List<Map<String, String>> liveSheetItems = [];
         for (int i = 1; i < rows.length; i++) {
@@ -688,9 +709,18 @@ class _SmartContentPageState extends State<SmartContentPage> {
           }
         }
         await prefs.setString('sheet_cache_${widget.storageKey}', jsonEncode(liveSheetItems));
-        if (mounted) setState(() => items = [...liveSheetItems.reversed, ...baseList]);
+        if (mounted) {
+          setState(() => items = [...liveSheetItems.reversed, ...baseList]);
+          if (showToast) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✅ Synced! Google Sheet से ${liveSheetItems.length} आइटम लोड हुए।')));
+          }
+        }
       }
-    } catch (_) {}
+    } catch (e) {
+      if (mounted && showToast) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ इंटरनेट धीमा है, ऑफ़लाइन डेटा दिखाया जा रहा है।')));
+      }
+    }
     if (mounted) setState(() => isSyncing = false);
   }
 
@@ -775,57 +805,62 @@ class _SmartContentPageState extends State<SmartContentPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title), backgroundColor: widget.color, foregroundColor: Colors.white, actions: [
         if (isSyncing) const Padding(padding: EdgeInsets.all(14), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))),
-        IconButton(icon: const Icon(Icons.refresh), tooltip: 'Sync Google Sheet', onPressed: _loadAndSyncItems),
+        IconButton(icon: const Icon(Icons.refresh), tooltip: 'Sync Google Sheet', onPressed: () => _loadAndSyncItems(showToast: true)),
         IconButton(icon: const Icon(Icons.add_circle, size: 28), onPressed: _openAddDialog),
       ]),
       body: Column(
         children: [
           Padding(padding: const EdgeInsets.all(10), child: TextField(onChanged: (v) => setState(() => query = v), decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'खोजें (Search)...', border: OutlineInputBorder(), filled: true, fillColor: Colors.white))),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: filtered.length,
-              itemBuilder: (c, i) {
-                final item = filtered[i];
-                final img1 = item['img1'] ?? '';
-                final img2 = item['img2'] ?? '';
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 14),
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(color: widget.color.withOpacity(0.12), borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item['title']!, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: widget.color)), const SizedBox(height: 4), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(10)), child: Text(item['tag'] ?? '✨ खास', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)))]),
-                      ),
-                      if (img1.isNotEmpty || img2.isNotEmpty)
+            child: RefreshIndicator(
+              color: widget.color,
+              onRefresh: () => _loadAndSyncItems(showToast: true),
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                itemCount: filtered.length,
+                itemBuilder: (c, i) {
+                  final item = filtered[i];
+                  final img1 = item['img1'] ?? '';
+                  final img2 = item['img2'] ?? '';
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 14),
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(color: widget.color.withOpacity(0.12), borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
+                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item['title']!, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: widget.color)), const SizedBox(height: 4), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(10)), child: Text(item['tag'] ?? '✨ खास', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)))]),
+                        ),
+                        if (img1.isNotEmpty || img2.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+                            child: Row(children: [
+                              if (img1.isNotEmpty && File(img1).existsSync()) Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(File(img1), height: 120, fit: BoxFit.cover))),
+                              if (img1.isNotEmpty && img2.isNotEmpty) const SizedBox(width: 8),
+                              if (img2.isNotEmpty && File(img2).existsSync()) Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(File(img2), height: 120, fit: BoxFit.cover))),
+                            ]),
+                          ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-                          child: Row(children: [
-                            if (img1.isNotEmpty && File(img1).existsSync()) Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(File(img1), height: 120, fit: BoxFit.cover))),
-                            if (img1.isNotEmpty && img2.isNotEmpty) const SizedBox(width: 8),
-                            if (img2.isNotEmpty && File(img2).existsSync()) Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(File(img2), height: 120, fit: BoxFit.cover))),
-                          ]),
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if ((item['ing'] ?? '').isNotEmpty) ...[Container(width: double.infinity, padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(10)), child: Text("📌 मुख्य सामग्री / हाइलाइट्स:\n${item['ing']!}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500))), const SizedBox(height: 10)],
+                              if ((item['steps'] ?? '').isNotEmpty) Text("📝 बनाने की विधि / विवरण:\n${item['steps']!}", style: const TextStyle(fontSize: 14, height: 1.45)),
+                              if ((item['yt'] ?? '').isNotEmpty) ...[const SizedBox(height: 10), ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white), onPressed: () => _playVideoInApp(item['yt']!), icon: const Icon(Icons.play_circle_fill), label: const Text('ऐप में वीडियो देखें ▶️'))]
+                            ],
+                          ),
                         ),
-                      Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if ((item['ing'] ?? '').isNotEmpty) ...[Container(width: double.infinity, padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(10)), child: Text("📌 मुख्य सामग्री / हाइलाइट्स:\n${item['ing']!}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500))), const SizedBox(height: 10)],
-                            if ((item['steps'] ?? '').isNotEmpty) Text("📝 बनाने की विधि / विवरण:\n${item['steps']!}", style: const TextStyle(fontSize: 14, height: 1.45)),
-                            if ((item['yt'] ?? '').isNotEmpty) ...[const SizedBox(height: 10), ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white), onPressed: () => _playVideoInApp(item['yt']!), icon: const Icon(Icons.play_circle_fill), label: const Text('ऐप में वीडियो देखें ▶️'))]
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           )
         ],
