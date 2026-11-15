@@ -13,11 +13,11 @@ jobs:
       - run: sed -i "s/proguard-android.txt/proguard-android-optimize.txt/g" ~/.pub-cache/hosted/pub.dev/flutter_inappwebview_android-*/android/build.gradle || true
       - run: sed -i 's/compileOptions {/compileOptions {\n        isCoreLibraryDesugaringEnabled = true/g' android/app/build.gradle.kts || true
       - run: echo -e '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")\n}' >> android/app/build.gradle.kts
-      - run: sed -i 's/<application/<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"\/><uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"\/><uses-permission android:name="android.permission.READ_CONTACTS"\/><uses-permission android:name="android.permission.POST_NOTIFICATIONS"\/><uses-permission android:name="android.permission.VIBRATE"\/><queries><package android:name="com.whatsapp"\/><\/queries><application/g' android/app/src/main/AndroidManifest.xml
+      - run: sed -i 's/<application/<uses-permission android:name="android.permission.INTERNET"\/><uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"\/><uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"\/><uses-permission android:name="android.permission.READ_CONTACTS"\/><uses-permission android:name="android.permission.POST_NOTIFICATIONS"\/><uses-permission android:name="android.permission.VIBRATE"\/><queries><package android:name="com.whatsapp"\/><\/queries><application/g' android/app/src/main/AndroidManifest.xml
       - run: dart run flutter_launcher_icons
       - run: sed -i 's/android:label="womencare_sakhi"/android:label="SheCare Sakhi"/g' android/app/src/main/AndroidManifest.xml
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: SheCare-Sakhi-V5
+          name: SheCare-Sakhi-V6
           path: build/app/outputs/flutter-apk/app-release.apk
