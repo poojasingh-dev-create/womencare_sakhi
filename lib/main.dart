@@ -9,9 +9,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
+import 'package:csv/csv.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+const String kGoogleSheetCsvUrl = "https://google.com";
 
 
 Future<void> main() async {
@@ -221,13 +224,13 @@ class _HomeDashboardState extends State<HomeDashboard> {
 
 
   final Map<String, Map<String, String>> tr = {
-    'EN': {'welcome': 'Hello Beautiful! ✨', 'quoteTitle': 'आज का सुविचार', 'alarm': 'Alarm & Reminder', 'water': 'Water Tracker', 'tiffin': 'Kids Tiffin', 'recipe': 'Quick Recipes', 'kitchen': 'Kitchen & Home', 'beauty': 'Health & Beauty', 'salon': 'Home Salon', 'bhakti': 'Bhakti Path', 'period': 'Period Tracker', 'bmi': 'BMI Calculator', 'diary': 'Secret Diary', 'grocery': 'Grocery List', 'video': 'AI Video Guide', 'budget': 'Smart Budget', 'rate': 'Rate & Review'},
-    'HI': {'welcome': 'नमस्ते सखी! ✨', 'quoteTitle': 'आज का सुविचार', 'alarm': 'अलार्म व रिमाइंडर', 'water': 'वाटर ट्रैकर', 'tiffin': 'किड्स टिफिन', 'recipe': 'झटपट रेसिपी', 'kitchen': 'किचन और होम', 'beauty': 'हेल्थ और ब्यूटी', 'salon': 'होम सैलून', 'bhakti': 'भक्ति पथ', 'period': 'पीरियड ट्रैकर', 'bmi': 'BMI कैलकुलेटर', 'diary': 'सीक्रेट डायरी', 'grocery': 'राशन लिस्ट', 'video': 'AI वीडियो गाइड', 'budget': 'स्मार्ट बजट', 'rate': 'रेटिंग व सुझाव'},
-    'MR': {'welcome': 'नमस्कार सखी! ✨', 'quoteTitle': 'आजचा सुविचार', 'alarm': 'अलार्म आणि रिमाइंडर', 'water': 'वॉटर ट्रॅकर', 'tiffin': 'किड्स टिफिन', 'recipe': 'झटपट रेसिपी', 'kitchen': 'किचन आणि होम', 'beauty': 'हेल्थ आणि ब्युटी', 'salon': 'होम सलून', 'bhakti': 'भक्ती पथ', 'period': 'मासिक पाळी ट्रॅकर', 'bmi': 'BMI कॅल्क्युलेटर', 'diary': 'सीक्रेट डायरी', 'grocery': 'किराणा यादी', 'video': 'AI व्हिडिओ गाईड', 'budget': 'स्मार्ट बजेट', 'rate': 'रेटिंग आणि अभिप्राय'},
-    'PA': {'welcome': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ ਸਖੀ! ✨', 'quoteTitle': 'ਅੱਜ ਦਾ ਵਿਚਾਰ', 'alarm': 'ਅਲਾਰਮ ਤੇ ਰਿਮਾਈਂਡਰ', 'water': 'ਪਾਣੀ ਟਰੈਕਰ', 'tiffin': 'ਕਿਡਜ਼ ਟਿਫਿਨ', 'recipe': 'ਝਟਪਟ ਰੈਸਿਪੀ', 'kitchen': 'ਰਸੋਈ ਤੇ ਘਰ', 'beauty': 'ਸਿਹਤ ਤੇ ਬਿਊਟੀ', 'salon': 'ਹੋਮ ਸੈਲੂਨ', 'bhakti': 'ਭਗਤੀ ਮਾਰਗ', 'period': 'ਪੀਰੀਅਡ ਟਰੈਕਰ', 'bmi': 'BMI ਕੈਲਕੁਲੇਟਰ', 'diary': 'ਸੀਕ੍ਰੇਟ ਡਾਇਰੀ', 'grocery': 'ਰਾਸ਼ਨ ਲਿਸਟ', 'video': 'AI ਵੀਡੀਓ ਗਾਈਡ', 'budget': 'ਸਮਾਰਟ ਬਜਟ', 'rate': 'ਰੇਟਿੰਗ ਤੇ ਸੁਝਾਅ'},
-    'TA': {'welcome': 'வணக்கம் தோழி! ✨', 'quoteTitle': 'இன்றைய சிந்தனை', 'alarm': 'அலாரம் & நினைவூட்டல்', 'water': 'தண்ணீர் அளவு', 'tiffin': 'குழந்தைகள் டிபன்', 'recipe': 'சமையல் குறிப்புகள்', 'kitchen': 'சமையலறை & வீடு', 'beauty': 'ஆரோக்கியம் & அழகு', 'salon': 'ஹோம் சலூன்', 'bhakti': 'பக்தி பாதை', 'period': 'மாதவிடாய் கண்காணிப்பு', 'bmi': 'BMI கணிப்பான்', 'diary': 'ரகசிய நாட்குறிப்பு', 'grocery': 'மளிகை பட்டியல்', 'video': 'AI வீடியோ வழிகாட்டி', 'budget': 'ஸ்மார்ட் பட்ஜெட்', 'rate': 'மதிப்பீடு & கருத்து'},
-    'KN': {'welcome': 'ನಮಸ್ಕಾರ ಗೆಳತಿ! ✨', 'quoteTitle': 'ಇಂದಿನ ಸುಭಾಷಿತ', 'alarm': 'ಅಲಾರಂ ಮತ್ತು ರಿಮೈಂಡರ್', 'water': 'ನೀರಿನ ಟ್ರ್ಯಾಕರ್', 'tiffin': 'ಕಿಡ್ಸ್ ಟಿಫಿನ್', 'recipe': 'ತ್ವರಿತ ಅಡುಗೆ', 'kitchen': 'ಕಿಚನ್ ಮತ್ತು ಹೋಮ್', 'beauty': 'ಹೆಲ್ತ್ ಮತ್ತು ಬ್ಯೂಟಿ', 'salon': 'ಹೋಮ್ ಸಲೂನ್', 'bhakti': 'ಭಕ್ತಿ ಪಥ', 'period': 'ಪಿರಿಯಡ್ ಟ್ರ್ಯಾಕರ್', 'bmi': 'BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್', 'diary': 'ಸೀಕ್ರೆಟ್ ಡೈರಿ', 'grocery': 'ದಿನಸಿ ಪಟ್ಟಿ', 'video': 'AI ವಿಡಿಯೋ ಗೈಡ್', 'budget': 'ಸ್ಮಾರ್ಟ್ ಬಜೆಟ್', 'rate': 'ರೇಟಿಂಗ್ ಮತ್ತು ವಿಮರ್ಶೆ'},
-    'UR': {'welcome': 'آداب سہیلی! ✨', 'quoteTitle': 'آج کی اچھی بات', 'alarm': 'الارم اور ریمائنڈر', 'water': 'واٹر ٹریکر', 'tiffin': 'کڈز ٹفن', 'recipe': 'فوری پکوان', 'kitchen': 'کچن اور ہوم', 'beauty': 'ہیلتھ اور بیوٹی', 'salon': 'ہوم سیلون', 'bhakti': 'بھکتی پاتھ', 'period': 'پیریڈ ٹریکر', 'bmi': 'BMI کیلکولیٹر', 'diary': 'سیکریٹ ڈائری', 'grocery': 'راشن کی فہرست', 'video': 'AI ویڈیو گائیڈ', 'budget': 'اسمارٹ بجٹ', 'rate': 'ریٹنگ اور رائے'},
+    'EN': {'welcome': 'Hello Beautiful! ✨', 'quoteTitle': 'आज का सुविचार', 'alarm': 'Alarm & Reminder', 'water': 'Water Tracker', 'tiffin': 'Kids Tiffin', 'recipe': 'Quick Recipes', 'kitchen': 'Kitchen & Home', 'beauty': 'Health & Beauty', 'salon': 'Home Salon', 'bhakti': 'Bhakti Path', 'period': 'Period Tracker', 'bmi': 'BMI Calculator', 'yoga': 'Yoga & Exercise', 'diary': 'Secret Diary', 'grocery': 'Grocery List', 'video': 'AI Video Guide', 'budget': 'Smart Budget', 'rate': 'Rate & Review'},
+    'HI': {'welcome': 'नमस्ते सखी! ✨', 'quoteTitle': 'आज का सुविचार', 'alarm': 'अलार्म व रिमाइंडर', 'water': 'वाटर ट्रैकर', 'tiffin': 'किड्स टिफिन', 'recipe': 'झटपट रेसिपी', 'kitchen': 'किचन और होम', 'beauty': 'हेल्थ और ब्यूटी', 'salon': 'होम सैलून', 'bhakti': 'भक्ति पथ', 'period': 'पीरियड ट्रैकर', 'bmi': 'BMI कैलकुलेटर', 'yoga': 'योगा व एक्सरसाइज', 'diary': 'सीक्रेट डायरी', 'grocery': 'राशन लिस्ट', 'video': 'AI वीडियो गाइड', 'budget': 'स्मार्ट बजट', 'rate': 'रेटिंग व सुझाव'},
+    'MR': {'welcome': 'नमस्कार सखी! ✨', 'quoteTitle': 'आजचा सुविचार', 'alarm': 'अलार्म आणि रिमाइंडर', 'water': 'वॉटर ट्रॅकर', 'tiffin': 'किड्स टिफिन', 'recipe': 'झटपट रेसिपी', 'kitchen': 'किचन आणि होम', 'beauty': 'हेल्थ आणि ब्युटी', 'salon': 'होम सलून', 'bhakti': 'भक्ती पथ', 'period': 'मासिक पाळी ट्रॅकर', 'bmi': 'BMI कॅल्क्युलेटर', 'yoga': 'योगा आणि व्यायाम', 'diary': 'सीक्रेट डायरी', 'grocery': 'किराणा यादी', 'video': 'AI व्हिडिओ गाईड', 'budget': 'स्मार्ट बजेट', 'rate': 'रेटिंग आणि अभिप्राय'},
+    'PA': {'welcome': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ ਸਖੀ! ✨', 'quoteTitle': 'ਅੱਜ ਦਾ ਵਿਚਾਰ', 'alarm': 'ਅਲਾਰਮ ਤੇ ਰਿਮਾਈਂਡਰ', 'water': 'ਪਾਣੀ ਟਰੈਕਰ', 'tiffin': 'ਕਿਡਜ਼ ਟਿਫਿਨ', 'recipe': 'ਝਟਪਟ ਰੈਸਿਪੀ', 'kitchen': 'ਰਸੋਈ ਤੇ ਘਰ', 'beauty': 'ਸਿਹਤ ਤੇ ਬਿਊਟੀ', 'salon': 'ਹੋਮ ਸੈਲੂਨ', 'bhakti': 'ਭਗਤੀ ਮਾਰਗ', 'period': 'ਪੀਰੀਅਡ ਟਰੈਕਰ', 'bmi': 'BMI ਕੈਲਕੁਲੇਟਰ', 'yoga': 'ਯੋਗਾ ਤੇ ਕਸਰਤ', 'diary': 'ਸੀਕ੍ਰੇਟ ਡਾਇਰੀ', 'grocery': 'ਰਾਸ਼ਨ ਲਿਸਟ', 'video': 'AI ਵੀਡੀਓ ਗਾਈਡ', 'budget': 'ਸਮਾਰਟ ਬਜਟ', 'rate': 'ਰੇਟਿੰਗ ਤੇ ਸੁਝਾਅ'},
+    'TA': {'welcome': 'வணக்கம் தோழி! ✨', 'quoteTitle': 'இன்றைய சிந்தனை', 'alarm': 'அலாரம் & நினைவூட்டல்', 'water': 'தண்ணீர் அளவு', 'tiffin': 'குழந்தைகள் டிபன்', 'recipe': 'சமையல் குறிப்புகள்', 'kitchen': 'சமையலறை & வீடு', 'beauty': 'ஆரோக்கியம் & அழகு', 'salon': 'ஹோம் சலூன்', 'bhakti': 'பக்தி பாதை', 'period': 'மாதவிடாய் கண்காணிப்பு', 'bmi': 'BMI கணிப்பான்', 'yoga': 'யோகா & உடற்பயிற்சி', 'diary': 'ரகசிய நாட்குறிப்பு', 'grocery': 'மளிகை பட்டியல்', 'video': 'AI வீடியோ வழிகாட்டி', 'budget': 'ஸ்மார்ட் பட்ஜெட்', 'rate': 'மதிப்பீடு & கருத்து'},
+    'KN': {'welcome': 'ನಮಸ್ಕಾರ ಗೆಳತಿ! ✨', 'quoteTitle': 'ಇಂದಿನ ಸುಭಾಷಿತ', 'alarm': 'ಅಲಾರಂ ಮತ್ತು ರಿಮೈಂಡರ್', 'water': 'ನೀರಿನ ಟ್ರ್ಯಾಕರ್', 'tiffin': 'ಕಿಡ್ಸ್ ಟಿಫಿನ್', 'recipe': 'ತ್ವರಿತ ಅಡುಗೆ', 'kitchen': 'ಕಿಚನ್ ಮತ್ತು ಹೋಮ್', 'beauty': 'ಹೆಲ್ತ್ ಮತ್ತು ಬ್ಯೂಟಿ', 'salon': 'ಹೋಮ್ ಸಲೂನ್', 'bhakti': 'ಭಕ್ತಿ ಪಥ', 'period': 'ಪಿರಿಯಡ್ ಟ್ರ್ಯಾಕರ್', 'bmi': 'BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್', 'yoga': 'ಯೋಗ ಮತ್ತು ವ್ಯಾಯಾಮ', 'diary': 'ಸೀಕ್ರೆಟ್ ಡೈರಿ', 'grocery': 'ದಿನಸಿ ಪಟ್ಟಿ', 'video': 'AI ವಿಡಿಯೋ ಗೈಡ್', 'budget': 'ಸ್ಮಾರ್ಟ್ ಬಜೆಟ್', 'rate': 'ರೇಟಿಂಗ್ ಮತ್ತು ವಿಮರ್ಶೆ'},
+    'UR': {'welcome': 'آداب سہیلی! ✨', 'quoteTitle': 'آج کی اچھی بات', 'alarm': 'الارم اور ریمائنڈر', 'water': 'واٹر ٹریکر', 'tiffin': 'کڈز ٹفن', 'recipe': 'فوری پکوان', 'kitchen': 'کچن اور ہوم', 'beauty': 'ہیلتھ اور بیوٹی', 'salon': 'ہوم سیلون', 'bhakti': 'بھکتی پاتھ', 'period': 'پیریڈ ٹریکر', 'bmi': 'BMI کیلکولیٹر', 'yoga': 'یوگا اور ورزش', 'diary': 'سیکریٹ ڈائری', 'grocery': 'راشن کی فہرست', 'video': 'AI ویڈیو گائیڈ', 'budget': 'اسمارٹ بجٹ', 'rate': 'ریٹنگ اور رائے'},
   };
 
 
@@ -310,12 +313,15 @@ class _HomeDashboardState extends State<HomeDashboard> {
       {'title': t['bhakti']!, 'icon': '🛕', 'page': const BhaktiPathPage()},
       {'title': t['period']!, 'icon': '🌸', 'page': const PeriodPage()},
       {'title': t['bmi']!, 'icon': '⚖️', 'page': const BMIPage()},
+      {'title': t['yoga']!, 'icon': '🧘‍♀️', 'page': const YogaPage()},
       {'title': t['diary']!, 'icon': '📔', 'page': const SecretDiaryPage()},
       {'title': t['grocery']!, 'icon': '🛒', 'page': const GroceryPage()},
       {'title': t['video']!, 'icon': '🎬', 'page': const VideoPage()},
       {'title': t['budget']!, 'icon': '💰', 'page': const BudgetPage()},
       {'title': t['rate']!, 'icon': '⭐', 'page': const RatePage()},
     ];
+
+
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(fontScale)),
       child: Scaffold(
@@ -341,7 +347,12 @@ class _HomeDashboardState extends State<HomeDashboard> {
               ],
               onChanged: (v) { if (v != null) setState(() => lang = v); },
             ),
-            IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.share, color: Colors.white, size: 18), onPressed: () => shareDirectWhatsApp("🌸 Download SheCare Sakhi App - Your Daily Companion for Safety, Health & Home! 💖")),
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.share, color: Colors.white, size: 18),
+              onPressed: () => shareDirectWhatsApp("🌸 Download *SheCare Sakhi* App - Your Daily Companion for Women Safety, Health & Home! 💖\n\n📲 Download Link:\nhttps://github.com\n\n✨ Har Nari Ki Sacchi Saheli!"),
+            ),
             const SizedBox(width: 8),
             IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.settings, color: Colors.white, size: 18), onPressed: _openSettings),
             const SizedBox(width: 8),
@@ -573,15 +584,7 @@ class _SOSPageState extends State<SOSPage> {
                       if (savedNum2.isNotEmpty) Text('👤 Backup Contact: +91 $savedNum2', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       if (activeTarget.isNotEmpty) ...[
                         const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700, foregroundColor: Colors.white),
-                            onPressed: () => launchUrl(Uri(scheme: 'tel', path: activeTarget)),
-                            icon: const Icon(Icons.phone_in_talk),
-                            label: Text('📞 Call Family Now (+91 $activeTarget)'),
-                          ),
-                        ),
+                        SizedBox(width: double.infinity, child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700, foregroundColor: Colors.white), onPressed: () => launchUrl(Uri(scheme: 'tel', path: activeTarget)), icon: const Icon(Icons.phone_in_talk), label: Text('📞 Call Family Now (+91 $activeTarget)'))),
                       ]
                     ],
                   ),
@@ -636,30 +639,65 @@ class SmartContentPage extends StatefulWidget {
 class _SmartContentPageState extends State<SmartContentPage> {
   List<Map<String, String>> items = [];
   String query = '';
+  bool isSyncing = false;
 
 
   @override
   void initState() {
     super.initState();
-    _loadItems();
+    _loadAndSyncItems();
   }
 
 
-  Future<void> _loadItems() async {
+  Future<void> _loadAndSyncItems() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? raw = prefs.getString('saved_${widget.storageKey}');
-    if (raw != null) {
-      final List decoded = jsonDecode(raw);
-      setState(() => items = decoded.map((e) => Map<String, String>.from(e)).toList());
+    final String? cachedSheet = prefs.getString('sheet_cache_${widget.storageKey}');
+    final String? localRaw = prefs.getString('saved_${widget.storageKey}');
+
+
+    List<Map<String, String>> baseList = localRaw != null
+        ? (jsonDecode(localRaw) as List).map((e) => Map<String, String>.from(e)).toList()
+        : List.from(widget.initialItems);
+
+
+    if (cachedSheet != null) {
+      final sheetList = (jsonDecode(cachedSheet) as List).map((e) => Map<String, String>.from(e)).toList();
+      setState(() => items = [...sheetList, ...baseList]);
     } else {
-      setState(() => items = List.from(widget.initialItems));
+      setState(() => items = baseList);
     }
+
+
+    setState(() => isSyncing = true);
+    try {
+      final res = await http.get(Uri.parse("$kGoogleSheetCsvUrl&t=${DateTime.now().millisecondsSinceEpoch}")).timeout(const Duration(seconds: 8));
+      if (res.statusCode == 200) {
+        final String body = utf8.decode(res.bodyBytes);
+        final List<List<dynamic>> rows = const CsvToListConverter(eol: '\n').convert(body);
+        List<Map<String, String>> liveSheetItems = [];
+        for (int i = 1; i < rows.length; i++) {
+          final r = rows[i];
+          if (r.length >= 2 && r.toString().trim().toLowerCase() == widget.storageKey.toLowerCase()) {
+            liveSheetItems.add({
+              'title': r.toString().trim(),
+              'tag': r.length > 2 && r.toString().trim().isNotEmpty ? r.toString().trim() : '✨ Live Update',
+              'ing': r.length > 3 ? r.toString().trim() : '',
+              'steps': r.length > 4 ? r.toString().trim() : '',
+              'yt': r.length > 5 ? r.toString().trim() : '',
+            });
+          }
+        }
+        await prefs.setString('sheet_cache_${widget.storageKey}', jsonEncode(liveSheetItems));
+        if (mounted) setState(() => items = [...liveSheetItems.reversed, ...baseList]);
+      }
+    } catch (_) {}
+    if (mounted) setState(() => isSyncing = false);
   }
 
 
-  Future<void> _saveItems() async {
+  Future<void> _saveLocalItems(List<Map<String, String>> updated) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('saved_${widget.storageKey}', jsonEncode(items));
+    await prefs.setString('saved_${widget.storageKey}', jsonEncode(updated));
   }
 
 
@@ -672,37 +710,26 @@ class _SmartContentPageState extends State<SmartContentPage> {
 
   void _playVideoInApp(String url) {
     final videoId = _extractYoutubeId(url);
-    if (videoId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Invalid YouTube Video Link')));
-      return;
-    }
+    if (videoId == null) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ Invalid YouTube Video Link'))); return; }
     final ytController = YoutubePlayerController(initialVideoId: videoId, flags: const YoutubePlayerFlags(autoPlay: true));
-    showDialog(
-      context: context,
-      builder: (c) => AlertDialog(
-        contentPadding: const EdgeInsets.all(8),
-        content: YoutubePlayer(controller: ytController, showVideoProgressIndicator: true),
-        actions: [TextButton(onPressed: () { ytController.dispose(); Navigator.pop(c); }, child: const Text('Close Video ❌'))],
-      ),
-    );
+    showDialog(context: context, builder: (c) => AlertDialog(contentPadding: const EdgeInsets.all(8), content: YoutubePlayer(controller: ytController, showVideoProgressIndicator: true), actions: [TextButton(onPressed: () { ytController.dispose(); Navigator.pop(c); }, child: const Text('Close Video ❌'))]));
   }
-  void _openAddOrEditDialog({int? editIndex}) {
-    final existing = editIndex != null ? items[editIndex] : null;
+  void _openAddDialog() {
     final pinCtrl = TextEditingController();
-    final titleCtrl = TextEditingController(text: existing?['title'] ?? '');
-    final tagCtrl = TextEditingController(text: existing?['tag'] ?? '⏱️ 10 मिनट • 🌟 खास');
-    final ingCtrl = TextEditingController(text: existing?['ing'] ?? '');
-    final stepCtrl = TextEditingController(text: existing?['steps'] ?? '');
-    final ytCtrl = TextEditingController(text: existing?['yt'] ?? '');
-    String img1 = existing?['img1'] ?? '';
-    String img2 = existing?['img2'] ?? '';
+    final titleCtrl = TextEditingController();
+    final tagCtrl = TextEditingController(text: '⏱️ 10 मिनट • 🌟 खास');
+    final ingCtrl = TextEditingController();
+    final stepCtrl = TextEditingController();
+    final ytCtrl = TextEditingController();
+    String img1 = '';
+    String img2 = '';
 
 
     showDialog(
       context: context,
       builder: (c) => StatefulBuilder(
         builder: (ctx, setModal) => AlertDialog(
-          title: Text(widget.adminOnlyAdd ? '🔒 Admin Verification Required' : (editIndex == null ? '➕ नया कंटेंट जोड़ें' : '✏️ कंटेंट एडिट करें')),
+          title: Text(widget.adminOnlyAdd ? '🔒 Admin Verification Required' : '➕ नया कंटेंट जोड़ें'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -714,27 +741,10 @@ class _SmartContentPageState extends State<SmartContentPage> {
                 TextField(controller: stepCtrl, maxLines: 5, decoration: const InputDecoration(labelText: 'पूरा तरीका / विधि पेस्ट करें')),
                 TextField(controller: ytCtrl, decoration: const InputDecoration(labelText: 'YouTube / Shorts Link (Optional)')),
                 const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    OutlinedButton.icon(
-                      onPressed: () async {
-                        final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 70);
-                        if (file != null) setModal(() => img1 = file.path);
-                      },
-                      icon: const Icon(Icons.photo, size: 16),
-                      label: Text(img1.isEmpty ? 'Photo 1' : 'Photo 1 ✅'),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () async {
-                        final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 70);
-                        if (file != null) setModal(() => img2 = file.path);
-                      },
-                      icon: const Icon(Icons.photo, size: 16),
-                      label: Text(img2.isEmpty ? 'Photo 2' : 'Photo 2 ✅'),
-                    ),
-                  ],
-                ),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                  OutlinedButton.icon(onPressed: () async { final f = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 70); if (f != null) setModal(() => img1 = f.path); }, icon: const Icon(Icons.photo, size: 16), label: Text(img1.isEmpty ? 'Photo 1' : 'Photo 1 ✅')),
+                  OutlinedButton.icon(onPressed: () async { final f = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 70); if (f != null) setModal(() => img2 = f.path); }, icon: const Icon(Icons.photo, size: 16), label: Text(img2.isEmpty ? 'Photo 2' : 'Photo 2 ✅')),
+                ]),
               ],
             ),
           ),
@@ -743,53 +753,17 @@ class _SmartContentPageState extends State<SmartContentPage> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: widget.color, foregroundColor: Colors.white),
               onPressed: () async {
-                if (widget.adminOnlyAdd && pinCtrl.text.trim() != '2026') {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ गलत Admin PIN!')));
-                  return;
-                }
-                if (titleCtrl.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ कृपया शीर्षक (Title) ज़रूर लिखें!')));
-                  return;
-                }
-                final link = ytCtrl.text.trim();
-                if (link.isNotEmpty && _extractYoutubeId(link) == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ कृपया सही YouTube या Shorts लिंक डालें!')));
-                  return;
-                }
-                final newItem = {'title': titleCtrl.text.trim(), 'tag': tagCtrl.text.trim(), 'ing': ingCtrl.text.trim(), 'steps': stepCtrl.text.trim(), 'yt': link, 'img1': img1, 'img2': img2};
-                setState(() {
-                  if (editIndex == null) { items.insert(0, newItem); }
-                  else { items[editIndex] = newItem; }
-                });
-                await _saveItems();
-                if (mounted) {
-                  Navigator.pop(c);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✅ स्थायी रूप से सेव व पब्लिश हो गया!')));
-                }
+                if (widget.adminOnlyAdd && pinCtrl.text.trim() != '2026') { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('❌ गलत Admin PIN!'))); return; }
+                if (titleCtrl.text.trim().isEmpty) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('⚠️ कृपया शीर्षक लिखें!'))); return; }
+                final newItem = {'title': titleCtrl.text.trim(), 'tag': tagCtrl.text.trim(), 'ing': ingCtrl.text.trim(), 'steps': stepCtrl.text.trim(), 'yt': ytCtrl.text.trim(), 'img1': img1, 'img2': img2};
+                setState(() => items.insert(0, newItem));
+                await _saveLocalItems(items);
+                if (mounted) Navigator.pop(c);
               },
               child: const Text('Publish ✅'),
             ),
           ],
         ),
-      ),
-    );
-  }
-  void _deleteItem(int index) {
-    if (!widget.adminOnlyAdd) {
-      setState(() => items.removeAt(index));
-      _saveItems();
-      return;
-    }
-    final pinCtrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (c) => AlertDialog(
-        title: const Text('🔒 Confirm Delete (Admin)'),
-        content: TextField(controller: pinCtrl, obscureText: true, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Enter Secret Admin PIN')),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancel')),
-          ElevatedButton(onPressed: () { if (pinCtrl.text.trim() == '2026') { setState(() => items.removeAt(index)); _saveItems(); Navigator.pop(c); } }, child: const Text('Delete 🗑️')),
-        ],
       ),
     );
   }
@@ -799,7 +773,11 @@ class _SmartContentPageState extends State<SmartContentPage> {
   Widget build(BuildContext context) {
     final filtered = items.where((e) => e['title']!.toLowerCase().contains(query.toLowerCase()) || (e['steps'] ?? '').toLowerCase().contains(query.toLowerCase())).toList();
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title), backgroundColor: widget.color, foregroundColor: Colors.white, actions: [IconButton(icon: const Icon(Icons.add_circle, size: 28), onPressed: () => _openAddOrEditDialog())]),
+      appBar: AppBar(title: Text(widget.title), backgroundColor: widget.color, foregroundColor: Colors.white, actions: [
+        if (isSyncing) const Padding(padding: EdgeInsets.all(14), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))),
+        IconButton(icon: const Icon(Icons.refresh), tooltip: 'Sync Google Sheet', onPressed: _loadAndSyncItems),
+        IconButton(icon: const Icon(Icons.add_circle, size: 28), onPressed: _openAddDialog),
+      ]),
       body: Column(
         children: [
           Padding(padding: const EdgeInsets.all(10), child: TextField(onChanged: (v) => setState(() => query = v), decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'खोजें (Search)...', border: OutlineInputBorder(), filled: true, fillColor: Colors.white))),
@@ -809,7 +787,6 @@ class _SmartContentPageState extends State<SmartContentPage> {
               itemCount: filtered.length,
               itemBuilder: (c, i) {
                 final item = filtered[i];
-                final realIndex = items.indexOf(item);
                 final img1 = item['img1'] ?? '';
                 final img2 = item['img2'] ?? '';
                 return Card(
@@ -823,24 +800,16 @@ class _SmartContentPageState extends State<SmartContentPage> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(color: widget.color.withOpacity(0.12), borderRadius: const BorderRadius.vertical(top: Radius.circular(16))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item['title']!, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: widget.color)), const SizedBox(height: 4), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(10)), child: Text(item['tag'] ?? '✨ खास', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)))])),
-                            Row(children: [IconButton(icon: Icon(Icons.edit, color: widget.color, size: 20), onPressed: () => _openAddOrEditDialog(editIndex: realIndex)), IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _deleteItem(realIndex))]),
-                          ],
-                        ),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item['title']!, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: widget.color)), const SizedBox(height: 4), Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.circular(10)), child: Text(item['tag'] ?? '✨ खास', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)))]),
                       ),
                       if (img1.isNotEmpty || img2.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-                          child: Row(
-                            children: [
-                              if (img1.isNotEmpty && File(img1).existsSync()) Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(File(img1), height: 120, fit: BoxFit.cover))),
-                              if (img1.isNotEmpty && img2.isNotEmpty) const SizedBox(width: 8),
-                              if (img2.isNotEmpty && File(img2).existsSync()) Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(File(img2), height: 120, fit: BoxFit.cover))),
-                            ],
-                          ),
+                          child: Row(children: [
+                            if (img1.isNotEmpty && File(img1).existsSync()) Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(File(img1), height: 120, fit: BoxFit.cover))),
+                            if (img1.isNotEmpty && img2.isNotEmpty) const SizedBox(width: 8),
+                            if (img2.isNotEmpty && File(img2).existsSync()) Expanded(child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(File(img2), height: 120, fit: BoxFit.cover))),
+                          ]),
                         ),
                       Padding(
                         padding: const EdgeInsets.all(14),
@@ -965,29 +934,48 @@ class BMIPage extends StatefulWidget {
 
 
 class _BMIPageState extends State<BMIPage> {
-  final TextEditingController _heightCtrl = TextEditingController();
+  final TextEditingController _feetCtrl = TextEditingController();
+  final TextEditingController _inchCtrl = TextEditingController();
   final TextEditingController _weightCtrl = TextEditingController();
   String resultText = '';
   Color resultColor = Colors.pink;
 
 
   void _calculateBMI() {
-    final hCm = double.tryParse(_heightCtrl.text);
-    final wKg = double.tryParse(_weightCtrl.text);
-    if (hCm == null || wKg == null || hCm <= 0 || wKg <= 0) return;
+    final feet = double.tryParse(_feetCtrl.text.trim()) ?? 0;
+    final inch = double.tryParse(_inchCtrl.text.trim()) ?? 0;
+    final wKg = double.tryParse(_weightCtrl.text.trim());
+    if (feet <= 0 || wKg == null || wKg <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('कृपया सही Feet, Inches और Weight (kg) डालें')));
+      return;
+    }
+    final totalInches = (feet * 12) + inch;
+    final hCm = totalInches * 2.54;
     final hM = hCm / 100;
     final bmi = wKg / (hM * hM);
+
+
     setState(() {
       if (bmi < 18.5) {
-        resultText = 'BMI: ${bmi.toStringAsFixed(1)} (Underweight - पौष्टिक आहार लें 🥗)';
-        resultColor = Colors.orange;
+        resultText = 'Height: ${hCm.toStringAsFixed(1)} cm\nBMI: ${bmi.toStringAsFixed(1)} (Underweight - पौष्टिक आहार लें 🥗)';
+        resultColor = Colors.orange.shade800;
       } else if (bmi < 25) {
-        resultText = 'BMI: ${bmi.toStringAsFixed(1)} (Normal & Healthy - एकदम फिट! 💖)';
-        resultColor = Colors.green;
+        resultText = 'Height: ${hCm.toStringAsFixed(1)} cm\nBMI: ${bmi.toStringAsFixed(1)} (Normal & Healthy - एकदम फिट! 💖)';
+        resultColor = Colors.green.shade700;
       } else {
-        resultText = 'BMI: ${bmi.toStringAsFixed(1)} (Overweight - नियमित योग व वॉक करें 🧘‍♀️)';
-        resultColor = Colors.red;
+        resultText = 'Height: ${hCm.toStringAsFixed(1)} cm\nBMI: ${bmi.toStringAsFixed(1)} (Overweight - नियमित योग व वॉक करें 🧘‍♀️)';
+        resultColor = Colors.red.shade700;
       }
+    });
+  }
+
+
+  void _resetBMI() {
+    setState(() {
+      _feetCtrl.clear();
+      _inchCtrl.clear();
+      _weightCtrl.clear();
+      resultText = '';
     });
   }
 
@@ -1004,13 +992,26 @@ class _BMIPageState extends State<BMIPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('अपना BMI और फिटनेस स्तर जांचें:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const Text('अपनी हाइट (Feet & Inches) और वज़न डालें:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
-                TextField(controller: _heightCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Height in cm (जैसे: 160)', border: OutlineInputBorder())),
+                Row(
+                  children: [
+                    Expanded(child: TextField(controller: _feetCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Feet (जैसे: 5)', border: OutlineInputBorder()))),
+                    const SizedBox(width: 10),
+                    Expanded(child: TextField(controller: _inchCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Inches (जैसे: 6)', border: OutlineInputBorder()))),
+                  ],
+                ),
                 const SizedBox(height: 10),
                 TextField(controller: _weightCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Weight in kg (जैसे: 55)', border: OutlineInputBorder())),
                 const SizedBox(height: 14),
-                ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.pink, foregroundColor: Colors.white), onPressed: _calculateBMI, child: const Text('Calculate BMI ⚖️')),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.pink, foregroundColor: Colors.white), onPressed: _calculateBMI, child: const Text('Calculate BMI ⚖️')),
+                    const SizedBox(width: 12),
+                    OutlinedButton.icon(onPressed: _resetBMI, icon: const Icon(Icons.refresh), label: const Text('Reset 🔄')),
+                  ],
+                ),
                 if (resultText.isNotEmpty) ...[const SizedBox(height: 16), Text(resultText, textAlign: TextAlign.center, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: resultColor))],
               ],
             ),
@@ -1020,13 +1021,24 @@ class _BMIPageState extends State<BMIPage> {
     );
   }
 }
+class YogaPage extends StatelessWidget {
+  const YogaPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return SmartContentPage(storageKey: 'yoga', title: '🧘‍♀️ Yoga & Exercise', color: Colors.deepPurple.shade600, initialItems: const [
+      {'title': '☀️ सूर्य नमस्कार (12 स्टेप्स और फायदे)', 'tag': '⏱️ 10 मिनट • 🌿 संपूर्ण स्वास्थ्य', 'ing': '• योगा मैट और खुली हवादार जगह\n• खाली पेट सुबह का समय सबसे उत्तम है', 'steps': '1. प्रणामासन से शुरू करके सभी 12 आसनों को गहरी सांस के साथ धीरे-धीरे करें।\n2. यह वजन घटाने, चेहरे पर चमक लाने और हार्मोन संतुलन के लिए सर्वश्रेष्ठ है।', 'yt': ''},
+      {'title': '🦋 तितली आसन (Butterfly Pose - महिलाओं के लिए खास)', 'tag': '⏱️ 5 मिनट • 🌸 पीरियड व कमर दर्द में लाभकारी', 'ing': '• आरामदायक ढीले कपड़े और योगा मैट', 'steps': '1. दोनों पैरों के तलवों को आपस में मिलाकर सीधा बैठें।\n2. दोनों घुटनों को तितली के पंखों की तरह 2-3 मिनट धीरे-धीरे ऊपर-नीचे हिलाएं।', 'yt': ''},
+    ]);
+  }
+}
+
+
 class KidsTiffinPage extends StatelessWidget {
   const KidsTiffinPage({super.key});
   @override
   Widget build(BuildContext context) {
     return SmartContentPage(storageKey: 'tiffin', title: '🍱 Kids Tiffin Special', color: Colors.green.shade700, initialItems: const [
       {'title': '🌮 मिनी आलू-पनीर परांठा रोल', 'tag': '⏱️ 15 मिनट • 🌟 बच्चों का पसंदीदा', 'ing': '• गेहूँ का आटा (गूँथा हुआ)\n• उबले हुए आलू और कद्दूकस किया पनीर\n• बारीक कटा हरा धनिया, जीरा पाउडर और हल्का नमक', 'steps': '1. आटे की पतली रोटी बेलकर तवे पर हल्का सेंक लें।\n2. आलू और पनीर का चटपटा मसाला रोटी पर फैलाएं।\n3. टाइट रोल बनाकर छोटे टुकड़ों में काटें और टिफिन में पैक करें।', 'yt': ''},
-      {'title': '🥞 सूजी-वेजी मिनी उत्तपम', 'tag': '⏱️ 10 मिनट • 🥗 हेल्दी नाश्ता', 'ing': '• 1 कप सूजी और आधा कप ताज़ा दही\n• बारीक कटी गाजर, शिमला मिर्च और टमाटर', 'steps': '1. सूजी, दही और पानी मिलाकर गाढ़ा घोल तैयार करें।\n2. तवे पर हल्का घी लगाकर छोटे-छोटे उत्तपम फैलाएं, ऊपर सब्ज़ियाँ डालें और सुनहरा सेंक लें।', 'yt': ''},
     ]);
   }
 }
