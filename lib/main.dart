@@ -569,8 +569,9 @@ class _SOSPageState extends State<SOSPage> {
         Position? pos;
         try {
           pos = await Geolocator.getCurrentPosition(
-            locationSettings: const AndroidSettings(accuracy: LocationAccuracy.low, forceLocationManager: true, timeLimit: Duration(seconds: 12)),
-          );
+            locationSettings: const           pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low, timeLimit: const Duration(seconds: 12));
+
+
         } catch (_) {
           pos = await Geolocator.getLastKnownPosition();
         }
