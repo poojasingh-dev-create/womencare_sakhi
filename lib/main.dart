@@ -14,7 +14,11 @@ import 'package:csv/csv.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-const String kGoogleSheetCsvUrl = "https://google.com";
+final Uri kGoogleSheetCsvUri = Uri.https(
+  '://google.com',
+  '/spreadsheets/d/e/2PACX-1vRUGJX9r8hHCJwZr_ces4k0CR_eLrW2wjRIiFjgkLw3ZiTRqAQbUioOBtm7T60aqlVSfNi36b2aHa2l/pub',
+  {'gid': '0', 'single': 'true', 'output': 'csv'},
+);
 
 
 Future<void> main() async {
@@ -270,7 +274,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
     if (await canLaunchUrl(waUri)) {
       await launchUrl(waUri);
     } else {
-      await launchUrl(Uri.parse("https://whatsapp.com"), mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.https('://whatsapp.com', '/send', {'text': text}), mode: LaunchMode.externalApplication);
     }
   }
 
@@ -361,7 +365,10 @@ class _HomeDashboardState extends State<HomeDashboard> {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               icon: const Icon(Icons.share, color: Colors.white, size: 17),
-              onPressed: () => shareDirectWhatsApp("🌸 Download *SheCare Sakhi* App - Your Daily Companion for Women Safety, Health & Home! 💖\n\n📲 Download Link:\nhttps://github.com\n\n✨ Har Nari Ki Sacchi Saheli!"),
+              onPressed: () {
+                final appUrl = Uri.https('github.com', '/psbaghel32-code/womencare_sakhi/actions').toString();
+                shareDirectWhatsApp("🌸 Download *SheCare Sakhi* App - Your Daily Companion for Women Safety, Health & Home! 💖\n\n📲 Download Link:\n$appUrl\n\n✨ Har Nari Ki Sacchi Saheli!");
+              },
             ),
             const SizedBox(width: 6),
             IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), icon: const Icon(Icons.settings, color: Colors.white, size: 17), onPressed: _openSettings),
@@ -558,7 +565,7 @@ class _SOSPageState extends State<SOSPage> {
         Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium, timeLimit: const Duration(seconds: 4));
         final double lat = pos.latitude;
         final double lng = pos.longitude;
-        locLink = "https://google.com";
+        locLink = Uri.https('://google.com', '/', {'q': '$lat,$lng'}).toString();
       }
     } catch (_) {}
 
@@ -691,7 +698,7 @@ class _SmartContentPageState extends State<SmartContentPage> {
     setState(() => isSyncing = true);
     try {
       final res = await http.get(
-        Uri.parse(kGoogleSheetCsvUrl),
+        kGoogleSheetCsvUri,
         headers: {'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0'},
       ).timeout(const Duration(seconds: 10));
 
