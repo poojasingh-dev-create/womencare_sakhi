@@ -419,6 +419,9 @@ class _HomeDashboardState extends State<HomeDashboard> {
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                  ),
 
 
                   const SizedBox(height: 12),
