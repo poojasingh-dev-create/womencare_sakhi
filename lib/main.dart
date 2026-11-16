@@ -14,12 +14,11 @@ import 'package:csv/csv.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-final Uri kLiveContentUri = Uri.https(
-  '://githubusercontent.com',
+final String _ghHost = 'raw.github' + 'usercontent.com';
+final Uri kContentJsonUri = Uri.https(
+  _ghHost,
   '/poojasingh-dev-create/womencare_sakhi/main/content.json',
 );
-
-
 
 
 Future<void> main() async {
@@ -367,7 +366,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
               constraints: const BoxConstraints(),
               icon: const Icon(Icons.share, color: Colors.white, size: 17),
               onPressed: () {
-                final appUrl = Uri.https('github.com', '/psbaghel32-code/womencare_sakhi/actions').toString();
+                final appUrl = Uri.https('github.com', '/poojasingh-dev-create/womencare_sakhi/actions').toString();
                 shareDirectWhatsApp("🌸 Download *SheCare Sakhi* App - Your Daily Companion for Women Safety, Health & Home! 💖\n\n📲 Download Link:\n$appUrl\n\n✨ Har Nari Ki Sacchi Saheli!");
               },
             ),
@@ -405,7 +404,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                       children: [
                         Text(t['welcome']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white)),
                         const SizedBox(height: 6),
-                                                const Text('Aapka din shubh ho.', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                        const Text('Aapka din shubh ho.', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
                         const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -422,8 +421,6 @@ class _HomeDashboardState extends State<HomeDashboard> {
                       ],
                     ),
                   ),
-
-
                   const SizedBox(height: 12),
                   Card(
                     color: Colors.white,
@@ -573,7 +570,7 @@ class _SOSPageState extends State<SOSPage> {
     });
 
 
-                String locLink = "Location Unavailable";
+    String locLink = "Location Unavailable";
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
@@ -587,18 +584,13 @@ class _SOSPageState extends State<SOSPage> {
           pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low, timeLimit: const Duration(seconds: 8));
         } catch (_) {}
         if (pos != null) {
-          locLink = Uri.https('://google.com', '/', {'q': '${pos.latitude},${pos.longitude}'}).toString();
+          final String mapHost = 'maps.google' + '.com';
+          locLink = Uri.https(mapHost, '/', {'q': '${pos.latitude},${pos.longitude}'}).toString();
         }
       }
     } catch (e) {
       locLink = "LocErr: $e";
     }
-
-
-
-
-
-
 
 
     final String target = savedNum1.length == 10 ? savedNum1 : savedNum2;
@@ -728,16 +720,16 @@ class _SmartContentPageState extends State<SmartContentPage> {
 
     setState(() => isSyncing = true);
     try {
-                        final res = await http.get(kLiveContentUri).timeout(const Duration(seconds: 12));
+      final res = await http.get(kContentJsonUri).timeout(const Duration(seconds: 15));
 
 
       if (res.statusCode == 200) {
         final String body = utf8.decode(res.bodyBytes);
-        final List<dynamic> rows = jsonDecode(body);
-        List<Map<String, String>> liveSheetItems = [];
-        for (final item in rows) {
+        final List<dynamic> jsonList = jsonDecode(body);
+        List<Map<String, String>> liveItems = [];
+        for (var item in jsonList) {
           if (item is Map && (item['category'] ?? '').toString().trim().toLowerCase() == widget.storageKey.toLowerCase()) {
-            liveSheetItems.add({
+            liveItems.add({
               'title': (item['title'] ?? '').toString().trim(),
               'tag': (item['tag'] ?? '').toString().trim().isNotEmpty ? (item['tag'] ?? '').toString().trim() : '✨ Live Update',
               'ing': (item['ing'] ?? '').toString().trim(),
@@ -746,13 +738,15 @@ class _SmartContentPageState extends State<SmartContentPage> {
             });
           }
         }
-        await prefs.setString('sheet_cache_${widget.storageKey}', jsonEncode(liveSheetItems));
+        await prefs.setString('sheet_cache_${widget.storageKey}', jsonEncode(liveItems));
         if (mounted) {
-          setState(() => items = [...liveSheetItems.reversed, ...baseList]);
+          setState(() => items = [...liveItems.reversed, ...baseList]);
           if (showToast) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✅ Synced! लाइव सर्वर से ${liveSheetItems.length} आइटम लोड हुए।')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✅ Synced! ${liveItems.length} आइटम लोड हुए।')));
           }
         }
+      } else if (mounted && showToast) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('⚠️ Status: ${res.statusCode}')));
       }
     } catch (e) {
       if (mounted && showToast) {
@@ -760,10 +754,6 @@ class _SmartContentPageState extends State<SmartContentPage> {
       }
     }
     if (mounted) setState(() => isSyncing = false);
-
-
-
-
   }
 
 
@@ -847,7 +837,7 @@ class _SmartContentPageState extends State<SmartContentPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title), backgroundColor: widget.color, foregroundColor: Colors.white, actions: [
         if (isSyncing) const Padding(padding: EdgeInsets.all(14), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))),
-        IconButton(icon: const Icon(Icons.refresh), tooltip: 'Sync Google Sheet', onPressed: () => _loadAndSyncItems(showToast: true)),
+        IconButton(icon: const Icon(Icons.refresh), tooltip: 'Sync Live Content', onPressed: () => _loadAndSyncItems(showToast: true)),
         IconButton(icon: const Icon(Icons.add_circle, size: 28), onPressed: _openAddDialog),
       ]),
       body: Column(
