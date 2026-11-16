@@ -1,4 +1,4 @@
-name: Build APK
+name: Build PlayStore AAB & APK
 on: [push]
 jobs:
   build:
@@ -8,11 +8,36 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - run: flutter create .
+      - run: flutter create --org com.shecare.sakhi .
       - run: flutter pub get
       - run: sed -i "s/proguard-android.txt/proguard-android-optimize.txt/g" ~/.pub-cache/hosted/pub.dev/flutter_inappwebview_android-*/android/build.gradle || true
       - run: sed -i 's/compileOptions {/compileOptions {\n        isCoreLibraryDesugaringEnabled = true/g' android/app/build.gradle.kts || true
       - run: echo -e '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")\n}' >> android/app/build.gradle.kts
+      - run: |
+          keytool -genkey -v -keystore android/app/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload -storepass shecare2026 -keypass shecare2026 -dname "CN=Pooja, OU=SheCare, O=SheCareSakhi, L=Bhopal, S=MP, C=IN"
+          cat << 'EOF' > android/key.properties
+          storePassword=shecare2026
+          keyPassword=shecare2026
+          keyAlias=upload
+          storeFile=upload-keystore.jks
+          EOF
+      - run: |
+          python3 -c '
+          p = "android/app/build.gradle.kts"
+          s = open(p).read()
+          old = "signingConfig = signingConfigs.getByName(\"debug\")"
+          new = """signingConfigs {
+              create("release") {
+                  keyAlias = "upload"
+                  keyPassword = "shecare2026"
+                  storeFile = file("upload-keystore.jks")
+                  storePassword = "shecare2026"
+              }
+          }
+          signingConfig = signingConfigs.getByName("release")"""
+          s = s.replace(old, new)
+          open(p, "w").write(s)
+          '
       - run: |
           python3 -c '
           p = "android/app/src/main/AndroidManifest.xml"
@@ -32,8 +57,10 @@ jobs:
           '
       - run: dart run flutter_launcher_icons
       - run: sed -i 's/android:label="womencare_sakhi"/android:label="SheCare Sakhi"/g' android/app/src/main/AndroidManifest.xml
-      - run: flutter build apk --release
+      - run: flutter build appbundle --release
       - uses: actions/upload-artifact@v4
         with:
-          name: SheCare-Sakhi-V6
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: SheCare-Sakhi-PlayStore-Bundle
+          path: |
+            build/app/outputs/bundle/release/app-release.aab
+            android/app/upload-keystore.jks
