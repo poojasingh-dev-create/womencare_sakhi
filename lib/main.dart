@@ -14,11 +14,12 @@ import 'package:csv/csv.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-final Uri kGoogleSheetCsvUri = Uri.https(
-  '://google.com',
-  '/spreadsheets/d/e/2PACX-1vRUGJX9r8hHCJwZr_ces4k0CR_eLrW2wjRIiFjgkLw3ZiTRqAQbUioOBtm7T60aqlVSfNi36b2aHa2l/pub',
-  {'gid': '0', 'single': 'true', 'output': 'csv'},
+final Uri kLiveContentUri = Uri.https(
+  '://githubusercontent.com',
+  '/poojasingh-dev-create/womencare_sakhi/main/content.json',
 );
+
+
 
 
 Future<void> main() async {
@@ -404,10 +405,22 @@ class _HomeDashboardState extends State<HomeDashboard> {
                       children: [
                         Text(t['welcome']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white)),
                         const SizedBox(height: 6),
-                        Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Aapka din shubh ho.  •  ', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)), const Icon(Icons.access_time_filled, size: 15, color: Colors.white), const SizedBox(width: 4), Text(timeStr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white))]),
-                      ],
-                    ),
-                  ),
+                                                const Text('Aapka din shubh ho.', style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500)),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.22), borderRadius: BorderRadius.circular(20)),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.access_time_filled, size: 20, color: Colors.white),
+                              const SizedBox(width: 6),
+                              Text(timeStr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white, letterSpacing: 1.0)),
+                            ],
+                          ),
+                        ),
+
+
                   const SizedBox(height: 12),
                   Card(
                     color: Colors.white,
@@ -557,7 +570,7 @@ class _SOSPageState extends State<SOSPage> {
     });
 
 
-            String locLink = "Location Unavailable";
+                String locLink = "Location Unavailable";
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
@@ -566,15 +579,10 @@ class _SOSPageState extends State<SOSPage> {
       LocationPermission perm = await Geolocator.checkPermission();
       if (perm == LocationPermission.denied) perm = await Geolocator.requestPermission();
       if (perm == LocationPermission.whileInUse || perm == LocationPermission.always) {
-        Position? pos;
+        Position? pos = await Geolocator.getLastKnownPosition();
         try {
-          pos = await Geolocator.getCurrentPosition(
-            locationSettings: const           pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low, timeLimit: const Duration(seconds: 12));
-
-
-        } catch (_) {
-          pos = await Geolocator.getLastKnownPosition();
-        }
+          pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low, timeLimit: const Duration(seconds: 8));
+        } catch (_) {}
         if (pos != null) {
           locLink = Uri.https('://google.com', '/', {'q': '${pos.latitude},${pos.longitude}'}).toString();
         }
@@ -582,6 +590,8 @@ class _SOSPageState extends State<SOSPage> {
     } catch (e) {
       locLink = "LocErr: $e";
     }
+
+
 
 
 
@@ -715,22 +725,21 @@ class _SmartContentPageState extends State<SmartContentPage> {
 
     setState(() => isSyncing = true);
     try {
-                  final res = await http.get(kGoogleSheetCsvUri).timeout(const Duration(seconds: 15));
+                        final res = await http.get(kLiveContentUri).timeout(const Duration(seconds: 12));
 
 
       if (res.statusCode == 200) {
-        final String body = utf8.decode(res.bodyBytes).replaceAll('\r\n', '\n');
-        final List<List<dynamic>> rows = const CsvToListConverter(eol: '\n', shouldParseNumbers: false).convert(body);
+        final String body = utf8.decode(res.bodyBytes);
+        final List<dynamic> rows = jsonDecode(body);
         List<Map<String, String>> liveSheetItems = [];
-        for (int i = 1; i < rows.length; i++) {
-          final r = rows[i];
-          if (r.length >= 2 && r.elementAt(0).toString().trim().toLowerCase() == widget.storageKey.toLowerCase()) {
+        for (final item in rows) {
+          if (item is Map && (item['category'] ?? '').toString().trim().toLowerCase() == widget.storageKey.toLowerCase()) {
             liveSheetItems.add({
-              'title': r.elementAt(1).toString().trim(),
-              'tag': r.length > 2 && r.elementAt(2).toString().trim().isNotEmpty ? r.elementAt(2).toString().trim() : '✨ Live Update',
-              'ing': r.length > 3 ? r.elementAt(3).toString().trim() : '',
-              'steps': r.length > 4 ? r.elementAt(4).toString().trim() : '',
-              'yt': r.length > 5 ? r.elementAt(5).toString().trim() : '',
+              'title': (item['title'] ?? '').toString().trim(),
+              'tag': (item['tag'] ?? '').toString().trim().isNotEmpty ? (item['tag'] ?? '').toString().trim() : '✨ Live Update',
+              'ing': (item['ing'] ?? '').toString().trim(),
+              'steps': (item['steps'] ?? '').toString().trim(),
+              'yt': (item['yt'] ?? '').toString().trim(),
             });
           }
         }
@@ -738,18 +747,18 @@ class _SmartContentPageState extends State<SmartContentPage> {
         if (mounted) {
           setState(() => items = [...liveSheetItems.reversed, ...baseList]);
           if (showToast) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✅ Synced! Google Sheet से ${liveSheetItems.length} आइटम लोड हुए।')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✅ Synced! लाइव सर्वर से ${liveSheetItems.length} आइटम लोड हुए।')));
           }
         }
-      } else if (mounted && showToast) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('⚠️ Sheet Status: ${res.statusCode}')));
       }
     } catch (e) {
       if (mounted && showToast) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('⚠️ Error: $e'), duration: const Duration(seconds: 5)));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('⚠️ Error: $e'), duration: const Duration(seconds: 4)));
       }
     }
     if (mounted) setState(() => isSyncing = false);
+
+
 
 
   }
