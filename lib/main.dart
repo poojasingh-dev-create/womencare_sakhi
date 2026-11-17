@@ -1,8 +1,7 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -11,181 +10,71 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:csv/csv.dart';
 
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
-
-
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 final String _ghHost = 'raw.github' + 'usercontent.com';
 final Uri kContentJsonUri = Uri.https(
   _ghHost,
-  '/psbaghel32-star/SheCare-Sakhi-App/main/content.json',
+  '/poojasingh-dev-create/womencare_sakhi/main/content.json',
 );
 
 
-Future<void> initSakhiNotifications() async {
-  const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-  await flutterLocalNotificationsPlugin.initialize(
-    const InitializationSettings(android: androidInit),
-    onDidReceiveNotificationResponse: (resp) async {
-      if (resp.actionId == 'DRANK_YES') {
-        final prefs = await SharedPreferences.getInstance();
-        int g = (prefs.getInt('water_glasses') ?? 0) + 1;
-        await prefs.setInt('water_glasses', g);
-        if (g == 8) {
-          await showSakhiNotification(
-            id: 902,
-            title: '🎉 बधाई हो सखी! लक्ष्य पूरा हुआ!',
-            body: 'आपका आज का 8 गिलास पानी पीने का टारगेट पूरा हो गया है! 💧🏆',
-          );
-        }
-      }
-      navKey.currentState?.push(
-        MaterialPageRoute(builder: (_) => const WaterPage()),
-      );
-    },
-  );
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.requestNotificationsPermission();
-}
-
-
-Future<void> showSakhiNotification({
-  required int id,
-  required String title,
-  required String body,
-  bool withAction = false,
-}) async {
-  final androidDetails = AndroidNotificationDetails(
-    'sakhi_alerts_channel',
-    'SheCare Sakhi Alerts & Alarms',
-    importance: Importance.max,
-    priority: Priority.high,
-    playSound: true,
-    enableVibration: true,
-    actions: withAction
-        ? [
-            const AndroidNotificationAction(
-              'DRANK_YES',
-              'हां पी लिया (+1 गिलास) ✅',
-              showsUserInterface: true,
-            )
-          ]
-        : null,
-  );
-  await flutterLocalNotificationsPlugin.show(
-    id,
-    title,
-    body,
-    NotificationDetails(android: androidDetails),
-  );
-}
-
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initSakhiNotifications();
-  final prefs = await SharedPreferences.getInstance();
-  final accepted = prefs.getBool('disclaimer_accepted') ?? false;
-  runApp(SheCareSakhiApp(accepted: accepted));
+  const AndroidInitializationSettings initAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  await flutterLocalNotificationsPlugin.initialize(const InitializationSettings(android: initAndroid));
+  runApp(const SheCareApp());
 }
 
 
-class SheCareSakhiApp extends StatelessWidget {
-  final bool accepted;
-  const SheCareSakhiApp({super.key, required this.accepted});
-
-
+class SheCareApp extends StatelessWidget {
+  const SheCareApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navKey,
       debugShowCheckedModeBanner: false,
       title: 'SheCare Sakhi',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFD81B60)),
-        useMaterial3: true,
-      ),
-      home: accepted ? const HomeDashboard() : const DisclaimerGatePage(),
+      theme: ThemeData(primaryColor: const Color(0xFFE91E63), scaffoldBackgroundColor: const Color(0xFFFFF5F7), useMaterial3: true),
+      home: const SplashScreen(),
     );
   }
 }
 
 
-class DisclaimerGatePage extends StatefulWidget {
-  const DisclaimerGatePage({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
   @override
-  State<DisclaimerGatePage> createState() => _DisclaimerGatePageState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 
-class _DisclaimerGatePageState extends State<DisclaimerGatePage> {
-  bool agreed = false;
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Timer(const Duration(milliseconds: 2500), () {
+      if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const GreetingScreen()));
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF0F5),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('image_280732b5.jpg'), fit: BoxFit.cover)),
+        child: Container(
+          decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.pink.shade900.withOpacity(0.5), Colors.pink.shade700.withOpacity(0.75)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const Text('🌸', style: TextStyle(fontSize: 64)),
-              const SizedBox(height: 12),
-              const Text(
-                'SheCare Sakhi में स्वागत है!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFAD1457),
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Card(
-                child: Padding(
-                  padding: EdgeInsets.all(14),
-                  child: Text(
-                    'यह ऐप केवल सामान्य जीवनशैली, सुरक्षा जागरूकता और घरेलू जानकारी के लिए है। यह किसी भी प्रकार की चिकित्सीय सलाह (Medical Advice) का विकल्प नहीं है।',
-                    style: TextStyle(fontSize: 14, height: 1.4),
-                  ),
-                ),
-              ),
-              CheckboxListTile(
-                value: agreed,
-                onChanged: (v) => setState(() => agreed = v ?? false),
-                title: const Text('मैं सभी नियमों से सहमत हूँ।'),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD81B60),
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: agreed
-                      ? () async {
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setBool('disclaimer_accepted', true);
-                          if (context.mounted) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const HomeDashboard()),
-                            );
-                          }
-                        }
-                      : null,
-                  child: const Text('आगे बढ़ें (Continue) 🚀',
-                      style: TextStyle(fontSize: 16)),
-                ),
-              ),
+              Text('SheCare Sakhi', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white, shadows: [Shadow(blurRadius: 8, color: Colors.black54)])),
+              SizedBox(height: 8),
+              Text('Har Nari Ki Sacchi Saheli ✨', style: TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.w500)),
+              SizedBox(height: 70),
             ],
           ),
         ),
@@ -193,6 +82,134 @@ class _DisclaimerGatePageState extends State<DisclaimerGatePage> {
     );
   }
 }
+
+
+class GreetingScreen extends StatefulWidget {
+  const GreetingScreen({super.key});
+  @override
+  State<GreetingScreen> createState() => _GreetingScreenState();
+}
+
+
+class _GreetingScreenState extends State<GreetingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Timer(const Duration(milliseconds: 2000), () {
+      if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginPage()));
+    });
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFFFFF0F5), Color(0xFFF8BBD0)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('💖✨', style: TextStyle(fontSize: 60)),
+            SizedBox(height: 16),
+            Text('Hello Beautiful!', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Color(0xFF880E4F))),
+            SizedBox(height: 10),
+            Text('Your Daily Companion for Care & Joy 🌸', style: TextStyle(fontSize: 16, color: Color(0xFFAD1457))),
+          ],
+        ),
+      ),
+    );
+  }
+}
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _phoneCtrl = TextEditingController();
+  bool agreed = true;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAlreadyLoggedIn();
+  }
+
+
+  Future<void> _checkAlreadyLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('user_phone') != null && mounted) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeDashboard()));
+    }
+  }
+
+
+  void _showTerms() {
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('📜 Terms & Conditions'),
+        content: const SingleChildScrollView(
+          child: Text('1. SheCare Sakhi is designed for women safety, health & home utility.\n2. Period Tracker, BMI & Health Tips are for general awareness only; consult a doctor for medical advice.\n3. Your Secret Diary PIN, notes & emergency contacts stay securely on your own device.\n4. Use SOS only during real emergencies.'),
+        ),
+        actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('I Agree ✅'))],
+      ),
+    );
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(gradient: LinearGradient(colors: [Color(0xFFFFF0F5), Color(0xFFFCE4EC)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('🌸', style: TextStyle(fontSize: 60)),
+            const SizedBox(height: 10),
+            const Text('Welcome to SheCare Sakhi', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF880E4F))),
+            const SizedBox(height: 6),
+            const Text('Login with your mobile number for alerts & safety', style: TextStyle(color: Colors.black54)),
+            const SizedBox(height: 20),
+            TextField(controller: _phoneCtrl, keyboardType: TextInputType.phone, maxLength: 10, decoration: const InputDecoration(prefixText: '+91 ', labelText: 'Enter 10-Digit Mobile Number', border: OutlineInputBorder(), filled: true, fillColor: Colors.white)),
+            Row(
+              children: [
+                Checkbox(value: agreed, activeColor: const Color(0xFFE91E63), onChanged: (v) => setState(() => agreed = v!)),
+                Expanded(child: InkWell(onTap: _showTerms, child: const Text('I agree to Terms & Conditions (Read)', style: TextStyle(decoration: TextDecoration.underline, fontSize: 12, color: Color(0xFF880E4F))))),
+              ],
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFE91E63), foregroundColor: Colors.white),
+                onPressed: () async {
+                  if (_phoneCtrl.text.length == 10 && agreed) {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setString('user_phone', _phoneCtrl.text);
+                    if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeDashboard()));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter valid 10-digit number & accept Terms')));
+                  }
+                },
+                child: const Text('Login & Continue 🚀', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class HomeDashboard extends StatefulWidget {
   const HomeDashboard({super.key});
   @override
@@ -201,57 +218,51 @@ class HomeDashboard extends StatefulWidget {
 
 
 class _HomeDashboardState extends State<HomeDashboard> {
+  String lang = 'EN';
+  bool isGridView = true;
+  double fontScale = 1.0;
+  double iconSize = 30.0;
   String timeStr = '';
   Timer? _clockTimer;
   int quoteIndex = 0;
+
+
+  final Map<String, Map<String, String>> tr = {
+    'EN': {'welcome': 'Hello Beautiful! ✨', 'quoteTitle': 'आज का सुविचार', 'alarm': 'Alarm & Reminder', 'water': 'Water Tracker', 'tiffin': 'Kids Tiffin', 'recipe': 'Quick Recipes', 'kitchen': 'Kitchen & Home', 'beauty': 'Health & Beauty', 'salon': 'Home Salon', 'bhakti': 'Bhakti Path', 'period': 'Period Tracker', 'bmi': 'BMI Calculator', 'yoga': 'Yoga & Exercise', 'diary': 'Secret Diary', 'grocery': 'Grocery List', 'video': 'AI Video Guide', 'budget': 'Smart Budget', 'rate': 'Rate & Review'},
+    'HI': {'welcome': 'नमस्ते सखी! ✨', 'quoteTitle': 'आज का सुविचार', 'alarm': 'अलार्म व रिमाइंडर', 'water': 'वाटर ट्रैकर', 'tiffin': 'किड्स टिफिन', 'recipe': 'झटपट रेसिपी', 'kitchen': 'किचन और होम', 'beauty': 'हेल्थ और ब्यूटी', 'salon': 'होम सैलून', 'bhakti': 'भक्ति पथ', 'period': 'पीरियड ट्रैकर', 'bmi': 'BMI कैलकुलेटर', 'yoga': 'योगा व एक्सरसाइज', 'diary': 'सीक्रेट डायरी', 'grocery': 'राशन लिस्ट', 'video': 'AI वीडियो गाइड', 'budget': 'स्मार्ट बजट', 'rate': 'रेटिंग व सुझाव'},
+    'MR': {'welcome': 'नमस्कार सखी! ✨', 'quoteTitle': 'आजचा सुविचार', 'alarm': 'अलार्म आणि रिमाइंडर', 'water': 'वॉटर ट्रॅकर', 'tiffin': 'किड्स टिफिन', 'recipe': 'झटपट रेसिपी', 'kitchen': 'किचन आणि होम', 'beauty': 'हेल्थ आणि ब्युटी', 'salon': 'होम सलून', 'bhakti': 'भक्ती पथ', 'period': 'मासिक पाळी ट्रॅकर', 'bmi': 'BMI कॅल्क्युलेटर', 'yoga': 'योगा आणि व्यायाम', 'diary': 'सीक्रेट डायरी', 'grocery': 'किराणा यादी', 'video': 'AI व्हिडिओ गाईड', 'budget': 'स्मार्ट बजेट', 'rate': 'रेटिंग आणि अभिप्राय'},
+    'PA': {'welcome': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ ਸਖੀ! ✨', 'quoteTitle': 'ਅੱਜ ਦਾ ਵਿਚਾਰ', 'alarm': 'ਅਲਾਰਮ ਤੇ ਰਿਮਾਈਂਡਰ', 'water': 'ਪਾਣੀ ਟਰੈਕਰ', 'tiffin': 'ਕਿਡਜ਼ ਟਿਫਿਨ', 'recipe': 'ਝਟਪਟ ਰੈਸਿਪੀ', 'kitchen': 'ਰਸੋਈ ਤੇ ਘਰ', 'beauty': 'ਸਿਹਤ ਤੇ ਬਿਊਟੀ', 'salon': 'ਹੋਮ ਸੈਲੂਨ', 'bhakti': 'ਭਗਤੀ ਮਾਰਗ', 'period': 'ਪੀਰੀਅਡ ਟਰੈਕਰ', 'bmi': 'BMI ਕੈਲਕੁਲੇਟਰ', 'yoga': 'ਯੋਗਾ ਤੇ ਕਸਰਤ', 'diary': 'ਸੀਕ੍ਰੇਟ ਡਾਇਰੀ', 'grocery': 'ਰਾਸ਼ਨ ਲਿਸਟ', 'video': 'AI ਵੀਡੀਓ ਗਾਈਡ', 'budget': 'ਸਮਾਰਟ ਬਜਟ', 'rate': 'ਰੇਟਿੰਗ ਤੇ ਸੁਝਾਅ'},
+    'TA': {'welcome': 'வணக்கம் தோழி! ✨', 'quoteTitle': 'இன்றைய சிந்தனை', 'alarm': 'அலாரம் & நினைவூட்டல்', 'water': 'தண்ணீர் அளவு', 'tiffin': 'குழந்தைகள் டிபன்', 'recipe': 'சமையல் குறிப்புகள்', 'kitchen': 'சமையலறை & வீடு', 'beauty': 'ஆரோக்கியம் & அழகு', 'salon': 'ஹோம் சலூன்', 'bhakti': 'பக்தி பாதை', 'period': 'மாதவிடாய் கண்காணிப்பு', 'bmi': 'BMI கணிப்பான்', 'yoga': 'யோகா & உடற்பயிற்சி', 'diary': 'ரகசிய நாட்குறிப்பு', 'grocery': 'மளிகை பட்டியல்', 'video': 'AI வீடியோ வழிகாட்டி', 'budget': 'ஸ்மார்ட் பட்ஜெட்', 'rate': 'மதிப்பீடு & கருத்து'},
+    'KN': {'welcome': 'ನಮಸ್ಕಾರ ಗೆಳತಿ! ✨', 'quoteTitle': 'ಇಂದಿನ ಸುಭಾಷಿತ', 'alarm': 'ಅಲಾರಂ ಮತ್ತು ರಿಮೈಂಡರ್', 'water': 'ನೀರಿನ ಟ್ರ್ಯಾಕರ್', 'tiffin': 'ಕಿಡ್ಸ್ ಟಿಫಿನ್', 'recipe': 'ತ್ವರಿತ ಅಡುಗೆ', 'kitchen': 'ಕಿಚನ್ ಮತ್ತು ಹೋಮ್', 'beauty': 'ಹೆಲ್ತ್ ಮತ್ತು ಬ್ಯೂಟಿ', 'salon': 'ಹೋಮ್ ಸಲೂನ್', 'bhakti': 'ಭಕ್ತಿ ಪಥ', 'period': 'ಪಿರಿಯಡ್ ಟ್ರ್ಯಾಕರ್', 'bmi': 'BMI ಕ್ಯಾಲ್ಕುಲೇಟರ್', 'yoga': 'ಯೋಗ ಮತ್ತು ವ್ಯಾಯಾಮ', 'diary': 'ಸೀಕ್ರೆಟ್ ಡೈರಿ', 'grocery': 'ದಿನಸಿ ಪಟ್ಟಿ', 'video': 'AI ವಿಡಿಯೋ ಗೈಡ್', 'budget': 'ಸ್ಮಾರ್ಟ್ ಬಜೆಟ್', 'rate': 'ರೇಟಿಂಗ್ ಮತ್ತು ವಿಮರ್ಶೆ'},
+    'UR': {'welcome': 'آداب سہیلی! ✨', 'quoteTitle': 'آج کی اچھی بات', 'alarm': 'الارم اور ریمائنڈر', 'water': 'واٹر ٹریکر', 'tiffin': 'کڈز ٹفن', 'recipe': 'فوری پکوان', 'kitchen': 'کچن اور ہوم', 'beauty': 'ہیلتھ اور بیوٹی', 'salon': 'ہوم سیلون', 'bhakti': 'بھکتی پاتھ', 'period': 'پیریڈ ٹریکر', 'bmi': 'BMI کیلکولیٹر', 'yoga': 'یوگا اور ورزش', 'diary': 'سیکریٹ ڈائری', 'grocery': 'راشن کی فہرست', 'video': 'AI ویڈیو گائیڈ', 'budget': 'اسمارٹ بجٹ', 'rate': 'ریٹنگ اور رائے'},
+  };
+
+
   final List<String> quotes = [
-    'खुद पर विश्वास रखें, आप हर मुश्किल को आसान बना सकती हैं। 💪💖',
-    'मुस्कराहट आपका सबसे खूबसूरत गहना है, इसे हमेशा पहने रखें। 🌸✨',
-    'नारी शक्ति ही परिवार और समाज की सबसे बड़ी ताकत है। 👑❤️',
+    "खुद पर विश्वास रखें, आप हर मुश्किल को आसान बना सकती हैं। 💪💖",
+    "मुस्कराहट आपका सबसे खूबसूरत गहना है, इसे हमेशा पहने रखें। 🌸✨",
+    "हर नया दिन एक नया मौका है अपने सपनों को पूरा करने का। 🌟🦋",
   ];
-
-
   @override
   void initState() {
     super.initState();
     _updateClock();
-    _clockTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => _updateClock());
-    _loadLiveQuotes();
+    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) => _updateClock());
+_loadLiveQuotes();
   }
-
-
-  void _updateClock() {
-    final now = DateTime.now();
-    final h = now.hour > 12 ? now.hour - 12 : (now.hour == 0 ? 12 : now.hour);
-    final m = now.minute.toString().padLeft(2, '0');
-    final ampm = now.hour >= 12 ? 'PM' : 'AM';
-    if (mounted) setState(() => timeStr = '$h:$m $ampm');
-  }
-
-
   Future<void> _loadLiveQuotes() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final cached = prefs.getString('cached_quotes');
       if (cached != null) {
         final list = List<String>.from(jsonDecode(cached));
-        if (list.isNotEmpty && mounted) {
-          setState(() {
-            quotes.clear();
-            quotes.addAll(list);
-          });
-        }
+        if (list.isNotEmpty && mounted) setState(() { quotes.clear(); quotes.addAll(list); });
       }
-      final res =
-          await http.get(kContentJsonUri).timeout(const Duration(seconds: 12));
+      final res = await http.get(kContentJsonUri).timeout(const Duration(seconds: 12));
       if (res.statusCode == 200) {
         final List<dynamic> list = jsonDecode(utf8.decode(res.bodyBytes));
         final liveQ = list
-            .where((e) =>
-                e is Map &&
-                (e['category'] ?? '').toString().trim().toLowerCase() ==
-                    'quote')
+            .where((e) => e is Map && (e['category'] ?? '').toString().trim().toLowerCase() == 'quote')
             .map((e) => (e['title'] ?? '').toString().trim())
             .where((t) => t.isNotEmpty)
             .toList();
@@ -270,22 +281,127 @@ class _HomeDashboardState extends State<HomeDashboard> {
   }
 
 
+  void _updateClock() {
+    final now = DateTime.now();
+    final h = now.hour > 12 ? now.hour - 12 : (now.hour == 0 ? 12 : now.hour);
+    final m = now.minute.toString().padLeft(2, '0');
+    final s = now.second.toString().padLeft(2, '0');
+    final ampm = now.hour >= 12 ? 'PM' : 'AM';
+    if (mounted) setState(() => timeStr = "$h:$m:$s $ampm");
+  }
+
+
   @override
   void dispose() {
     _clockTimer?.cancel();
     super.dispose();
   }
+
+
+  Future<void> shareDirectWhatsApp(String text) async {
+    final String encoded = Uri.encodeComponent(text);
+    final Uri waUri = Uri.parse("whatsapp://send?text=$encoded");
+    if (await canLaunchUrl(waUri)) {
+      await launchUrl(waUri);
+    } else {
+      await launchUrl(Uri.https('://whatsapp.com', '/send', {'text': text}), mode: LaunchMode.externalApplication);
+    }
+  }
+
+
+  void _openSettings() {
+    showModalBottomSheet(
+      context: context,
+      builder: (c) => StatefulBuilder(
+        builder: (ctx, setModal) => Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('⚙️ Display Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFE91E63))),
+              const SizedBox(height: 16),
+              Text('Font Size: ${(fontScale * 100).toInt()}%'),
+              Slider(value: fontScale, min: 0.85, max: 1.35, divisions: 5, activeColor: const Color(0xFFE91E63), onChanged: (v) { setModal(() => fontScale = v); setState(() => fontScale = v); }),
+              Text('Heart & Icon Size: ${iconSize.toInt()} px'),
+              Slider(value: iconSize, min: 24.0, max: 40.0, divisions: 4, activeColor: const Color(0xFFE91E63), onChanged: (v) { setModal(() => iconSize = v); setState(() => iconSize = v); }),
+              ElevatedButton(onPressed: () => Navigator.pop(c), child: const Text('Save & Close ✅')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    final features = [
-      {'title': '🚨 SOS मदद', 'sub': 'आपातकालीन सुरक्षा', 'color': Colors.red.shade800, 'page': const SOSPage()},
-      {'title': '💧 Water Reminder', 'sub': 'पानी अलर्ट व काउंट', 'color': Colors.blue.shade700, 'page': const WaterPage()},
-      {'title': '⏰ Alarm & Alert', 'sub': 'दवा व जरूरी अलार्म', 'color': Colors.amber.shade800, 'page': const AlarmPage()},
-      {'title': '🍲 Quick Recipes', 'sub': 'झटपट व व्रत रेसिपी', 'color': Colors.orange.shade800, 'page': const LiveCategoryPage(title: '🍲 Quick Recipes', category: 'recipe', color: Colors.orange)},
-      {'title': '🍱 Kids Tiffin', 'sub': 'स्कूल टिफिन आइडिया', 'color': Colors.green.shade700, 'page': const LiveCategoryPage(title: '🍱 Kids Tiffin', category: 'tiffin', color: Colors.green)},
-      {'title': '🏡 Kitchen Hacks', 'sub': 'स्मार्ट घरेलू टिप्स', 'color': Colors.teal.shade700, 'page': const LiveCategoryPage(title: '🏡 Kitchen & Home', category: 'kitchen', color: Colors.teal)},
-      {'title': '🌹 Health & Beauty', 'sub': 'घरेलू निखार केयर', 'color': Colors.pink.shade600, 'page': const LiveCategoryPage(title: '🌹 Health & Beauty', category: 'beauty', color: Colors.pink)},
-      {'title': '💅 Home Salon', 'sub': 'पार्लर टिप्स घर पर', 'color': Colors.purple.shade600, 'page': const LiveCategoryPage(title: '💅 Home Salon', category: 'salon', color: Colors.purple)},
+    final t = tr[lang]!;
+    final List<Map<String, dynamic>> menuItems = [
+      {'title': t['alarm']!, 'icon': '⏰', 'page': const AlarmPage()},
+      {'title': t['water']!, 'icon': '🥤', 'page': const WaterPage()},
+      {'title': t['tiffin']!, 'icon': '🍱', 'page': const KidsTiffinPage()},
+      {'title': t['recipe']!, 'icon': '🍲', 'page': const RecipePage()},
+      {'title': t['kitchen']!, 'icon': '🏡', 'page': const KitchenPage()},
+      {'title': t['beauty']!, 'icon': '💄', 'page': const BeautyPage()},
+      {'title': t['salon']!, 'icon': '💅', 'page': const HomeSalonPage()},
+      {'title': t['bhakti']!, 'icon': '🛕', 'page': const BhaktiPathPage()},
+      {'title': t['period']!, 'icon': '🌸', 'page': const PeriodPage()},
+      {'title': t['bmi']!, 'icon': '⚖️', 'page': const BMIPage()},
+      {'title': t['yoga']!, 'icon': '🧘‍♀️', 'page': const YogaPage()},
+      {'title': t['diary']!, 'icon': '📔', 'page': const SecretDiaryPage()},
+      {'title': t['grocery']!, 'icon': '🛒', 'page': const GroceryPage()},
+      {'title': t['video']!, 'icon': '🎬', 'page': const VideoPage()},
+      {'title': t['budget']!, 'icon': '💰', 'page': const BudgetPage()},
+      {'title': t['rate']!, 'icon': '⭐', 'page': const RatePage()},
+    ];
+
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(fontScale)),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFE91E63),
+          titleSpacing: 8,
+          title: const Text('🌸 SheCare Sakhi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+          actions: [
+            DropdownButton<String>(
+              value: lang,
+              dropdownColor: const Color(0xFFE91E63),
+              underline: const SizedBox(),
+              icon: const Icon(Icons.language, color: Colors.white, size: 16),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+              items: const [
+                DropdownMenuItem(value: 'EN', child: Text('EN')),
+                DropdownMenuItem(value: 'HI', child: Text('हिंदी')),
+                DropdownMenuItem(value: 'MR', child: Text('मराठी')),
+                DropdownMenuItem(value: 'PA', child: Text('ਪੰਜਾਬੀ')),
+                DropdownMenuItem(value: 'TA', child: Text('தமிழ்')),
+                DropdownMenuItem(value: 'KN', child: Text('ಕನ್ನಡ')),
+                DropdownMenuItem(value: 'UR', child: Text('اردو')),
+              ],
+              onChanged: (v) { if (v != null) setState(() => lang = v); },
+            ),
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.refresh, color: Colors.white, size: 18),
+              onPressed: () {
+                setState(() => quoteIndex = (quoteIndex + 1) % quotes.length);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('🔄 App Refreshed & Synced! ✅'), duration: Duration(seconds: 1)));
+              },
+            ),
+            const SizedBox(width: 6),
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.share, color: Colors.white, size: 17),
+              onPressed: () {
+                final appUrl = Uri.https('github.com', '/poojasingh-dev-create/womencare_sakhi/actions').toString();
+                shareDirectWhatsApp("🌸 Download *SheCare Sakhi* App - Your Daily Companion for Women Safety, Health & Home! 💖\n\n📲 Download Link:\n$appUrl\n\n✨ Har Nari Ki Sacchi Saheli!");
+              },
+            ),
+            const SizedBox(width: 6),
+            IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(), र पर', 'color': Colors.purple.shade600, 'page': const LiveCategoryPage(title: '💅 Home Salon', category: 'salon', color: Colors.purple)},
       {'title': '🛕 Bhakti Path', 'sub': 'संपूर्ण आरती व चालीसा', 'color': Colors.deepOrange.shade700, 'page': const LiveCategoryPage(title: '🛕 Bhakti Path', category: 'bhakti', color: Colors.deepOrange)},
       {'title': '🧘‍♀️ Yoga & Health', 'sub': 'योगा और प्राणायाम', 'color': Colors.indigo.shade600, 'page': const LiveCategoryPage(title: '🧘‍♀️ Yoga & Exercise', category: 'yoga', color: Colors.indigo)},
       {'title': '🎬 Video Guide', 'sub': 'उपयोगी वीडियो गाइड', 'color': Colors.red.shade600, 'page': const LiveCategoryPage(title: '🎬 Video Guide', category: 'aivideo', color: Colors.red)},
