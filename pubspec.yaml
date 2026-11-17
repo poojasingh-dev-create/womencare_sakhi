@@ -1,5 +1,5 @@
 name: womencare_sakhi
-description: SheCare Sakhi - Safety, Health & Home Companion
+description: SheCare Sakhi - Safety, Health & Daily Guide for Women
 publish_to: 'none'
 version: 6.0.0+7
 
@@ -16,6 +16,7 @@ dependencies:
   flutter_contacts: ^1.1.7
   image_picker: ^1.0.7
   flutter_local_notifications: ^17.0.0
+  flutter_ringtone_player: ^4.0.0
   http: ^1.2.1
   csv: ^6.0.0
 
