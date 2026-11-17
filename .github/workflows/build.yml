@@ -28,11 +28,25 @@ jobs:
       - name: Create Android Project Structure
         run: flutter create --platforms=android --org=com.pooja.shecaresakhi .
 
-      - name: Configure Android Permissions & SDK
+      - name: Configure Android Manifest & Gradle SDK 35
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
           sed -i 's/<application/<uses-permission android:name="android.permission.INTERNET"\/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"\/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"\/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"\/>\n    <uses-permission android:name="android.permission.READ_CONTACTS"\/>\n    <uses-permission android:name="android.permission.VIBRATE"\/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"\/>\n    <application/' $MANIFEST
           sed -i 's/android:label="[^"]*"/android:label="SheCare Sakhi"/' $MANIFEST
+
+          GRADLE="android/app/build.gradle"
+          if [ -f "android/app/build.gradle.kts" ]; then GRADLE="android/app/build.gradle.kts"; fi
+          sed -i 's/compileSdk = .*/compileSdk = 35/' $GRADLE
+          sed -i 's/compileSdkVersion .*/compileSdkVersion 35/' $GRADLE
+          sed -i 's/minSdk = .*/minSdk = 23/' $GRADLE
+          sed -i 's/minSdkVersion .*/minSdkVersion 23/' $GRADLE
+          sed -i 's/targetSdk = .*/targetSdk = 35/' $GRADLE
+          sed -i 's/targetSdkVersion .*/targetSdkVersion 35/' $GRADLE
+
+          echo "" >> android/gradle.properties
+          echo "flutter.compileSdkVersion=35" >> android/gradle.properties
+          echo "flutter.minSdkVersion=23" >> android/gradle.properties
+          echo "flutter.targetSdkVersion=35" >> android/gradle.properties
 
       - name: Install dependencies
         run: flutter pub get
