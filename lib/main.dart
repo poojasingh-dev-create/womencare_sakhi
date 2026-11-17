@@ -248,6 +248,36 @@ class _HomeDashboardState extends State<HomeDashboard> {
     super.initState();
     _updateClock();
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) => _updateClock());
+_loadLiveQuotes();
+  }
+  Future<void> _loadLiveQuotes() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString('cached_quotes');
+      if (cached != null) {
+        final list = List<String>.from(jsonDecode(cached));
+        if (list.isNotEmpty && mounted) setState(() { quotes.clear(); quotes.addAll(list); });
+      }
+      final res = await http.get(kContentJsonUri).timeout(const Duration(seconds: 12));
+      if (res.statusCode == 200) {
+        final List<dynamic> list = jsonDecode(utf8.decode(res.bodyBytes));
+        final liveQ = list
+            .where((e) => e is Map && (e['category'] ?? '').toString().trim().toLowerCase() == 'quote')
+            .map((e) => (e['title'] ?? '').toString().trim())
+            .where((t) => t.isNotEmpty)
+            .toList();
+        if (liveQ.isNotEmpty) {
+          await prefs.setString('cached_quotes', jsonEncode(liveQ));
+          if (mounted) {
+            setState(() {
+              quotes.clear();
+              quotes.addAll(liveQ);
+              quoteIndex = 0;
+            });
+          }
+        }
+      }
+    } catch (_) {}
   }
 
 
