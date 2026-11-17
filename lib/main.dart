@@ -859,11 +859,18 @@ class _SmartContentPageState extends State<SmartContentPage> {
       ),
     );
   }
+  String selectedSub = 'सभी';
 
 
   @override
   Widget build(BuildContext context) {
-    final filtered = items.where((e) => e['title']!.toLowerCase().contains(query.toLowerCase()) || (e['steps'] ?? '').toLowerCase().contains(query.toLowerCase())).toList();
+        final filtered = items.where((e) {
+      final subMatch = selectedSub == 'सभी' || (e['sub'] ?? '').toString().trim() == selectedSub;
+      final qMatch = e['title']!.toLowerCase().contains(query.toLowerCase()) || (e['steps'] ?? '').toLowerCase().contains(query.toLowerCase());
+      return subMatch && qMatch;
+    }).toList();
+
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.title), backgroundColor: widget.color, foregroundColor: Colors.white, actions: [
         if (isSyncing) const Padding(padding: EdgeInsets.all(14), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))),
@@ -873,6 +880,36 @@ class _SmartContentPageState extends State<SmartContentPage> {
       body: Column(
         children: [
           Padding(padding: const EdgeInsets.all(10), child: TextField(onChanged: (v) => setState(() => query = v), decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'खोजें (Search)...', border: OutlineInputBorder(), filled: true, fillColor: Colors.white))),
+          Builder(builder: (_) {
+            final subs = <String>{'सभी'};
+            for (final it in items) {
+              final s = (it['sub'] ?? '').toString().trim();
+              if (s.isNotEmpty) subs.add(s);
+            }
+            if (subs.length <= 1) return const SizedBox.shrink();
+            return SizedBox(
+              height: 44,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                children: subs.map((s) {
+                  final active = selectedSub == s;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(s, style: TextStyle(color: active ? Colors.white : widget.color, fontWeight: FontWeight.bold)),
+                      selected: active,
+                      selectedColor: widget.color,
+                      backgroundColor: widget.color.withValues(alpha: 0.1),
+                      onSelected: (_) => setState(() => selectedSub = s),
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          }),
+
+
           Expanded(
             child: RefreshIndicator(
               color: widget.color,
