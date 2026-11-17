@@ -30,7 +30,7 @@ flutter:
 
 flutter_launcher_icons:
   android: true
-  ios: true
+  ios: false
   image_path: "image_280732b5.jpg"
   adaptive_icon_background: "#FCE4EC"
   adaptive_icon_foreground: "image_280732b5.jpg"
