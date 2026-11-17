@@ -25,6 +25,15 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
+      - name: Create Android Project Structure
+        run: flutter create --platforms=android --org=com.pooja.shecaresakhi .
+
+      - name: Configure Android Permissions & SDK
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          sed -i 's/<application/<uses-permission android:name="android.permission.INTERNET"\/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"\/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"\/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"\/>\n    <uses-permission android:name="android.permission.READ_CONTACTS"\/>\n    <uses-permission android:name="android.permission.VIBRATE"\/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"\/>\n    <application/' $MANIFEST
+          sed -i 's/android:label="[^"]*"/android:label="SheCare Sakhi"/' $MANIFEST
+
       - name: Install dependencies
         run: flutter pub get
 
