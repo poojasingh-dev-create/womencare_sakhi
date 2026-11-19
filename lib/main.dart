@@ -719,6 +719,8 @@ class SmartContentPage extends StatefulWidget {
 class _SmartContentPageState extends State<SmartContentPage> {
   List<Map<String, String>> items = [];
   String query = '';
+  String selectedSub = 'सभी';
+  
   bool isSyncing = false;
 
 
@@ -762,6 +764,8 @@ class _SmartContentPageState extends State<SmartContentPage> {
             liveItems.add({
               'title': (item['title'] ?? '').toString().trim(),
               'tag': (item['tag'] ?? '').toString().trim().isNotEmpty ? (item['tag'] ?? '').toString().trim() : '✨ Live Update',
+              'sub_category': (item['sub_category'] ?? '').toString().trim(),
+              
               'ing': (item['ing'] ?? '').toString().trim(),
               'steps': (item['steps'] ?? '').toString().trim(),
               'yt': (item['yt'] ?? '').toString().trim(),
@@ -863,7 +867,24 @@ class _SmartContentPageState extends State<SmartContentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final filtered = items.where((e) => e['title']!.toLowerCase().contains(query.toLowerCase()) || (e['steps'] ?? '').toLowerCase().contains(query.toLowerCase())).toList();
+    final subSet = <String>{'सभी'};
+    for (var e in items) {
+      final s = (e['sub_category'] ?? '').trim();
+      if (s.isNotEmpty) subSet.add(s);
+    }
+    final subList = subSet.toList();
+    if (!subList.contains(selectedSub)) selectedSub = 'सभी';
+
+    final filtered = items.where((e) {
+      final q = query.toLowerCase();
+      final matchQuery = (e['title'] ?? '').toLowerCase().contains(q) ||
+          (e['tag'] ?? '').toLowerCase().contains(q) ||
+          (e['sub_category'] ?? '').toLowerCase().contains(q) ||
+          (e['steps'] ?? '').toLowerCase().contains(q);
+      final matchSub = selectedSub == 'सभी' || (e['sub_category'] ?? '').trim() == selectedSub;
+      return matchQuery && matchSub;
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.title), backgroundColor: widget.color, foregroundColor: Colors.white, actions: [
         if (isSyncing) const Padding(padding: EdgeInsets.all(14), child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))),
@@ -872,7 +893,43 @@ class _SmartContentPageState extends State<SmartContentPage> {
       ]),
       body: Column(
         children: [
-          Padding(padding: const EdgeInsets.all(10), child: TextField(onChanged: (v) => setState(() => query = v), decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'खोजें (Search)...', border: OutlineInputBorder(), filled: true, fillColor: Colors.white))),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 4),
+            child: TextField(
+              onChanged: (v) => setState(() => query = v),
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'खोजें (Search)...',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ),
+          ),
+          if (subList.length > 1)
+            SizedBox(
+              height: 44,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                itemCount: subList.length,
+                itemBuilder: (c, idx) {
+                  final sub = subList[idx];
+                  final isSel = selectedSub == sub;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(sub, style: TextStyle(color: isSel ? Colors.white : Colors.black87, fontWeight: FontWeight.bold)),
+                      selected: isSel,
+                      selectedColor: widget.color,
+                      backgroundColor: Colors.grey.shade200,
+                      onSelected: (_) => setState(() => selectedSub = sub),
+                    ),
+                  );
+                },
+              ),
+            ),
+
           Expanded(
             child: RefreshIndicator(
               color: widget.color,
