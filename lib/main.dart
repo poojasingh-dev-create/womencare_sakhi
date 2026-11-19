@@ -623,13 +623,20 @@ class _SOSPageState extends State<SOSPage> {
     }
 
 
-    final String target = savedNum1.length == 10 ? savedNum1 : savedNum2;
-    final String msg = Uri.encodeComponent("🚨 URGENT EMERGENCY! मुझे तुरंत मदद चाहिए! मेरी लाइव लोकेशन: $locLink - Sent via SheCare Sakhi");
-
+        final String target = savedNum1.length == 10 ? savedNum1 : savedNum2;
+    final String plainMsg = '🚨 URGENT EMERGENCY! मुझे तुरंत मदद चाहिए! मेरी लाइव लोकेशन: $locLink';
+    final String msg = Uri.encodeComponent(plainMsg);
 
     if (target.length == 10) {
+      bool hasNet = false;
+      try {
+        final res = await InternetAddress.lookup('google.com').timeout(const Duration(seconds: 2));
+        hasNet = res.isNotEmpty && res[0].rawAddress.isNotEmpty;
+      } catch (_) {
+        hasNet = false;
+      }
       final Uri waDirect = Uri.parse("whatsapp://send?phone=91$target&text=$msg");
-      if (await canLaunchUrl(waDirect)) {
+      if (hasNet && await canLaunchUrl(waDirect)) {
         await launchUrl(waDirect);
       } else {
         await launchUrl(Uri.parse("sms:$target?body=$msg"));
@@ -638,6 +645,7 @@ class _SOSPageState extends State<SOSPage> {
       await launchUrl(Uri(scheme: 'tel', path: '112'));
     }
   }
+
 
 
   @override
@@ -657,16 +665,64 @@ class _SOSPageState extends State<SOSPage> {
                   padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('✅ Saved Trusted Family Contacts:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                      const SizedBox(height: 6),
-                      if (savedNum1.isNotEmpty) Text('👤 Primary Contact: +91 $savedNum1', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                      if (savedNum2.isNotEmpty) Text('👤 Backup Contact: +91 $savedNum2', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                      if (activeTarget.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        SizedBox(width: double.infinity, child: ElevatedButton.icon(style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700, foregroundColor: Colors.white), onPressed: () => launchUrl(Uri(scheme: 'tel', path: activeTarget)), icon: const Icon(Icons.phone_in_talk), label: Text('📞 Call Family Now (+91 $activeTarget)'))),
-                      ]
-                    ],
+                                    children: [
+                  const Text('✅ Saved Trusted Family Contacts:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                  const SizedBox(height: 6),
+                  if (savedNum1.isNotEmpty)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('📞 Primary: +91 $savedNum1', style: const TextStyle(fontWeight: FontWeight.w600)),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.remove('sos_num1');
+                            setState(() => savedNum1 = '');
+                          },
+                        ),
+                      ],
+                    ),
+                  if (savedNum2.isNotEmpty)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('📞 Backup: +91 $savedNum2', style: const TextStyle(fontWeight: FontWeight.w600)),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.remove('sos_num2');
+                            setState(() => savedNum2 = '');
+                          },
+                        ),
+                      ],
+                    ),
+                  if (activeTarget.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.orange.shade800, foregroundColor: Colors.white),
+                        icon: const Icon(Icons.sms),
+                        label: const Text('📩 बिना इंटरनेट SMS लोकेशन भेजें (Offline SMS)'),
+                        onPressed: () async {
+                          String quickLoc = 'GPS Location';
+                          try {
+                            Position? p = await Geolocator.getLastKnownPosition();
+                            if (p != null) {
+                              final h = 'maps.google' + '.com';
+                              quickLoc = Uri.https(h, '/', {'q': '${p.latitude},${p.longitude}'}).toString();
+                            }
+                          } catch (_) {}
+                          final smsText = Uri.encodeComponent('🚨 EMERGENCY! मुझे तुरंत मदद चाहिए! मेरी लोकेशन: $quickLoc');
+                          await launchUrl(Uri.parse('sms:$activeTarget?body=$smsText'));
+                        },
+                      ),
+                    ),
+                  ],
+                ],
+
                   ),
                 ),
               ),
