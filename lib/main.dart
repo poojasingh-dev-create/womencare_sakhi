@@ -1384,33 +1384,191 @@ class BudgetPage extends StatefulWidget {
 
 
 class _BudgetPageState extends State<BudgetPage> {
-  final TextEditingController _ctrl = TextEditingController();
-  double total = 0;
+  final TextEditingController _itemCtrl = TextEditingController();
+  final TextEditingController _amtCtrl = TextEditingController();
+  DateTime _selectedDate = DateTime.now();
+  List<Map<String, dynamic>> _expenses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExpenses();
+  }
+
+  Future<void> _loadExpenses() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('smart_budget_expenses');
+    if (raw != null) {
+      setState(() {
+        _expenses = List<Map<String, dynamic>>.from(jsonDecode(raw));
+      });
+    }
+  }
+
+  Future<void> _saveExpenses() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('smart_budget_expenses', jsonEncode(_expenses));
+  }
+
+  Future<void> _pickDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
+    }
+  }
+
+  void _addExpense() {
+    final name = _itemCtrl.text.trim();
+    final amt = double.tryParse(_amtCtrl.text.trim()) ?? 0;
+    if (name.isEmpty || amt <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('कृपया सामान का नाम और सही राशि (₹) दोनों लिखें')),
+      );
+      return;
+    }
+    final dateStr =
+        '${_selectedDate.day.toString().padLeft(2, '0')}/${_selectedDate.month.toString().padLeft(2, '0')}/${_selectedDate.year}';
+    setState(() {
+      _expenses.insert(0, {'item': name, 'amount': amt, 'date': dateStr});
+      _itemCtrl.clear();
+      _amtCtrl.clear();
+      _selectedDate = DateTime.now();
+    });
+    _saveExpenses();
+  }
+
+  void _deleteExpense(int index) {
+    setState(() => _expenses.removeAt(index));
+    _saveExpenses();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double total = _expenses.fold(0.0, (sum, e) => sum + ((e['amount'] as num?)?.toDouble() ?? 0.0));
+    final currentDateLabel =
+        '${_selectedDate.day.toString().padLeft(2, '0')}/${_selectedDate.month.toString().padLeft(2, '0')}/${_selectedDate.year}';
+
     return Scaffold(
       appBar: AppBar(title: const Text('💰 Smart Budget'), backgroundColor: Colors.teal, foregroundColor: Colors.white),
       body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Total Expense: ₹${total.toStringAsFixed(0)}', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: total >= 5000 ? Colors.red : Colors.teal)),
-                const SizedBox(height: 12),
-                TextField(controller: _ctrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Enter Amount (₹)', border: OutlineInputBorder())),
-                const SizedBox(height: 10),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [ElevatedButton(onPressed: () { final val = double.tryParse(_ctrl.text); if (val != null && val > 0) { setState(() { total += val; _ctrl.clear(); }); if (total >= 5000) showDialog(context: context, builder: (c) => AlertDialog(title: const Text('⚠️ बजट चेतावनी!'), content: const Text('सावधान! आपका कुल खर्च ₹5000 से ऊपर चला गया है।'), actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('ठीक है'))])); } }, child: const Text('+ Add Expense')), const SizedBox(width: 10), TextButton(onPressed: () => setState(() => total = 0), child: const Text('Reset'))]),
-              ],
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.teal.shade50,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: Colors.teal.shade200),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('कुल खर्च (Total):', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal)),
+                  Text('₹${total.toStringAsFixed(0)}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.teal)),
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: 10),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _itemCtrl,
+                      decoration: const InputDecoration(
+                        labelText: 'क्या खरीदा (जैसे: सब्ज़ी, राशन, दवा)',
+                        prefixIcon: Icon(Icons.shopping_bag_outlined),
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _amtCtrl,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              labelText: 'कितने का (₹)',
+                              prefixIcon: Icon(Icons.currency_rupee),
+                              border: OutlineInputBorder(),
+                              isDense: true,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton.icon(
+                          onPressed: _pickDate,
+                          icon: const Icon(Icons.calendar_today, size: 16),
+                          label: Text(currentDateLabel),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                        onPressed: _addExpense,
+                        icon: const Icon(Icons.add_circle_outline),
+                        label: const Text('खर्च जोड़ें और सेव करें'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: _expenses.isEmpty
+                  ? const Center(child: Text('अभी कोई खर्च नहीं जोड़ा गया है। ऊपर से अपना हिसाब जोड़ें! 📝', style: TextStyle(color: Colors.grey)))
+                  : ListView.builder(
+                      itemCount: _expenses.length,
+                      itemBuilder: (c, i) {
+                        final item = _expenses[i];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.teal.shade100,
+                              child: const Icon(Icons.receipt_long, color: Colors.teal),
+                            ),
+                            title: Text(item['item'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Text('📅 तारीख: ${item['date'] ?? ''}'),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('₹${(item['amount'] as num).toStringAsFixed(0)}',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.teal)),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                                  onPressed: () => _deleteExpense(i),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
 
 
 class PeriodPage extends StatefulWidget {
