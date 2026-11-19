@@ -1355,25 +1355,157 @@ class WaterPage extends StatefulWidget {
 
 class _WaterPageState extends State<WaterPage> {
   int glasses = 0;
+  bool reminderOn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWaterData();
+  }
+
+  Future<void> _loadWaterData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    final savedDate = prefs.getString('water_date') ?? '';
+    setState(() {
+      glasses = (savedDate == today) ? (prefs.getInt('water_glasses') ?? 0) : 0;
+      reminderOn = prefs.getBool('water_reminder_on') ?? false;
+    });
+  }
+
+  Future<void> _saveWaterData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    await prefs.setString('water_date', today);
+    await prefs.setInt('water_glasses', glasses);
+    await prefs.setBool('water_reminder_on', reminderOn);
+  }
+
+  Future<void> _toggleReminder(bool val) async {
+    setState(() => reminderOn = val);
+    await _saveWaterData();
+    if (val) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+
+      const androidDetails = AndroidNotificationDetails(
+        'water_reminder_channel',
+        'Water Reminder',
+        channelDescription: 'Hourly water drinking reminder',
+        importance: Importance.max,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      );
+      const details = NotificationDetails(android: androidDetails);
+
+      await flutterLocalNotificationsPlugin.show(
+        101,
+        '💧 पानी पीने का समय हो गया है!',
+        'अपनी सेहत और ताज़गी के लिए 1 गिलास पानी पीएं — टच करके ऐप में जोड़ें ✅',
+        details,
+      );
+
+      await flutterLocalNotificationsPlugin.periodicallyShow(
+        102,
+        '💧 पानी पीने की याद (SheCare Sakhi)',
+        '1 गिलास पानी पीएं और ऐप खोलकर "हां पी लिया (+1) ✅" दबाएं!',
+        RepeatInterval.hourly,
+        details,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('🔔 हर घंटे पानी का रिमाइंडर चालू हो गया है! ऊपर Status Bar देखें 💧')),
+        );
+      }
+    } else {
+      await flutterLocalNotificationsPlugin.cancel(101);
+      await flutterLocalNotificationsPlugin.cancel(102);
+    }
+  }
+
+  void _drinkWater() {
+    setState(() => glasses++);
+    _saveWaterData();
+    if (glasses == 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('🎉 बधाई हो! आज का 8 गिलास पानी पीने का लक्ष्य पूरा हो गया!'),
+        ),
+      );
+    }
+  }
+
+  void _resetWater() {
+    setState(() => glasses = 0);
+    _saveWaterData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('🥤 Water Tracker'), backgroundColor: Colors.blue, foregroundColor: Colors.white),
-      body: Center(
+      appBar: AppBar(
+        title: const Text('💧 Water Tracker'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(icon: const Icon(Icons.refresh), tooltip: 'Reset Today', onPressed: _resetWater),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('💧', style: TextStyle(fontSize: 70)),
-            const SizedBox(height: 12),
-            Text('$glasses / 8 Glasses', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.blue)),
-            const SizedBox(height: 20),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [ElevatedButton(onPressed: () { setState(() => glasses++); if (glasses == 8) showDialog(context: context, builder: (c) => AlertDialog(title: const Text('🎉 बधाई हो सखी!'), content: const Text('आपका आज का 8 गिलास पानी पीने का लक्ष्य पूरा हुआ! 💧✨'), actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('शुक्रिया 💖'))])); }, child: const Text('+ 1 Glass')), const SizedBox(width: 12), TextButton(onPressed: () => setState(() => glasses = 0), child: const Text('Reset'))]),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              child: SwitchListTile(
+                secondary: const Icon(Icons.notifications_active, color: Colors.blue),
+                title: const Text('हर घंटे पानी रिमाइंडर (Status Bar)', style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: const Text('नोटिफिकेशन पर टच करते ही ऐप खुलेगा'),
+                value: reminderOn,
+                activeColor: Colors.blue,
+                onChanged: _toggleReminder,
+              ),
+            ),
+            const Spacer(),
+            const Text('💧', style: TextStyle(fontSize: 75)),
+            const SizedBox(height: 10),
+            Text('$glasses / 8 Glasses', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blue)),
+            const SizedBox(height: 10),
+            if (glasses >= 8)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.green)),
+                child: const Text('🎉 शानदार! आपने आज का लक्ष्य पूरा कर लिया है!', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+              ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                onPressed: _drinkWater,
+                icon: const Icon(Icons.check_circle, size: 26),
+                label: const Text('हां पी लिया (+1 गिलास) ✅', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+            ),
+            const Spacer(),
           ],
         ),
       ),
     );
   }
 }
+
 
 
 class BudgetPage extends StatefulWidget {
